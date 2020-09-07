@@ -39,12 +39,24 @@ module.exports = (env, {mode}) => {
           use: {
             loader: 'url-loader',
             options: {
-              limit: 1000,
+              limit: 100000,
               context: './src',
               name: '[path][name].[ext]'
             }
           }
         },
+        {
+          test: /\.(glb|gltf)$/,
+          use:
+          [
+              {
+                  loader: 'file-loader',
+                  options:
+                  {
+                  }
+              }
+          ]
+      },
         {
           test: /\.css$/,
           use: [
