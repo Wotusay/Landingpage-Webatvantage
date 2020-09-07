@@ -2,43 +2,20 @@ import './style.css';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from 'three';
 import GLTFLoader from 'three-gltf-loader';
-import model from './models/raze.glb'
-import { SkeletonUtils } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import model from './models/amongus.glb'
+import { Clock } from 'three';
 
-
-
-let modelskel; 
-const crossfadeControls = [];
-
-
-let currentBaseAction = 'idle';
-
-const allActions = []; 
-const baseActions = {
-    idle: {weight: 1}, 
-    walk: {weight: 0}, 
-    run: {weight:0}
-}
-
-const additiveActions = {
-    sneak_pose: { weight: 0 },
-    sad_pose: { weight: 0 },
-    agree: { weight: 0 },
-    headShake: { weight: 0 }
-};
+let mixer;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xa0a0a0);
+scene.background = new THREE.Color('skyblue');
 scene.fog = new THREE.Fog(0xa0a0a0, 10, 50);
 
-
 const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-hemiLight.position.set( 0, 20, 0 );
+hemiLight.position.set( 0, 5, 0 );
 scene.add( hemiLight );
 
-
-
-var dirLight = new THREE.DirectionalLight( 0xffffff );
+var dirLight = new THREE.DirectionalLight( 0xffffff);
 	dirLight.position.set( 3, 10, 10 );
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.top = 2;
@@ -54,39 +31,42 @@ var dirLight = new THREE.DirectionalLight( 0xffffff );
     mesh.receiveShadow = true;
     scene.add( mesh );
 
-    const loadModels = () => {
-        loadGltfModel(model);
-    }
+    const clock = new THREE.Clock();
+  
 
-    const scaling = (raze) => {
-        if (raze) {
-            const skeletonRaze =  SkeletonUtils.clone(raze);
-            if (skeletonRaze) {
-                skeletonRaze.scale.set(0.009,0.009,0.009 );
-                scene.add(skeletonRaze);
-            } 
-        }
-    }
 
-    const loadGltfModel = (raze) => {   
      const loader = new GLTFLoader(); 
-    loader.load(model, gltf => {
-        raze = gltf.scene;
-        raze.traverse(object => {
+        loader.load(model, gltf => {
+        let person = gltf.scene;
+        let animates = gltf.animations;
+
+        person.traverse(object => {
             if (object.isMesh) {object.castShadow = true} ;
-            
+          
         });
-        scaling(raze);
+        
+        mixer = new THREE.AnimationMixer(person);
+        animates.forEach((clip) => {
+            mixer.clipAction(clip).play();
+        })
+
+        person.scale.set(0.007,0.007,0.007 );
+        scene.add(person);
+
+        return mixer;
     },  
     
     error => { console.log( error )});
-        };
 
 
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 100 );
+const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 100 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true;
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
@@ -102,7 +82,11 @@ window.addEventListener('resize', () => {
 
 
 
-camera.position.z = 5;
+camera.position.set( -2, 2.5 , 2.5)
+
+//window.addEventListener('pointermove', () => {
+//    console.log(camera.position);
+//})
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -111,11 +95,13 @@ controls.maxDistance = 1000;
 
 
 
-const animate = () => {
-    requestAnimationFrame(animate);
 
-    controls.update();
-    renderer.render( scene, camera );
+const animate = () => {
+    requestAnimationFrame( animate );
+    let delta = clock.getDelta();
+    if ( mixer ) mixer.update( delta );
+
+    renderer.render( scene, camera );    
+
 };
-loadModels();
 animate();
