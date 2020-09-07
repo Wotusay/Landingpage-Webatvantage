@@ -34,5 +34,8 @@
     "last 2 versions",
     "> 1%",
     "not dead"
-  ]
+  ],
+  "dependencies": {
+    "three": "^0.120.1"
+  }
 }
