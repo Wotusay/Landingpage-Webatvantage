@@ -1,0 +1,70 @@
+@import './css/reset.css';
+@import './css/vars.css';
+@import './css/header.css';
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+/* stylelint-disable */
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+/* stylelint-enable */
+
+body {
+  font-size: 2rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  padding: calc((var(--margin) * 2) + 2vw); /*reduced calc test*/
+  background-color: var(--backgroundColor);
+  color: var(--textColor);
+}
+
+/** Dit is hier wat commentaar, dat er uit moet in production**/
+
+p {
+  line-height: calc(1.8);
+}
+
+strong {
+  font-weight: bold;
+
+  @nest p & {
+    /** enkel om @nest  voorbeeld aan te halen**/
+    color: darkorange;
+  }
+}
+
+img {
+  filter: grayscale(100%);
+  margin: 1rem auto;
+  display: block;
+  width: 50vw;
+
+  &:hover {
+    filter: none;
+  }
+}
+
+footer {
+  background-image: url(assets/img/nadar.svg);
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: 10vw;
+  height: 7rem;
+}
+
+.hide {
+  display: none;
+}
+
+@media screen and (width >= 500px) {
+
+  h1 {
+    font-size: 6vw;
+  }
+}

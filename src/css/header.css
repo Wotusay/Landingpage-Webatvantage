@@ -1,0 +1,17 @@
+h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: color(var(--textColor) lightness(50%));
+  font-variant-caps: small-caps;
+  position: relative;
+
+  &::after {
+    content: '';
+    background-image: url(../assets/img/balloon.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 100%;
+    width: 40vw;
+  }
+}
