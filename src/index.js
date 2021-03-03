@@ -21,19 +21,44 @@ export default class Sketch {
     this.container.appendChild( this.renderer.domElement );
     this.width =  this.container.offsetWidth;
     this.height = this.container.offsetHeight;
+    this.mouse = new THREE.Vector2();
+    this.point = new THREE.Vector3(0,0,0)
+
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 1000 );
     this.camera.position.set(0, 0, 6);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.scene = new THREE.Scene();
+    this.raycaster =  new THREE.Raycaster();
+
     this.setupResize();
     this.physics();
     this.addMesh();
     this.time = 0;
+    this.mouseMove();
     this.resize();
     this.render();
     this.settings();
 
+  }
+
+  mouseMove() {
+    let that = this;
+    this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshBasicMaterial());
+    window.addEventListener('mousemove', function(event){
+      that.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      that.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+      that.raycaster.setFromCamera(that.mouse, that.camera);
+
+      let intersects = that.raycaster.intersectObjects([that.testPlane]);
+
+      if (intersects.length > 0) {
+        console.log(intersects[0].point);
+        that.point = intersects[0].point;
+      }
+
+    }, false);
   }
 
   setupResize() {
@@ -95,7 +120,7 @@ export default class Sketch {
       worldscale: 1, // scale full world
       random: true,  // randomize sample
       info: false,   // calculate statistic or not
-      gravity: [0,-9.8,0]
+      gravity: [0,0,0]
     });
 
     this.body = this.world.add({
@@ -105,6 +130,7 @@ export default class Sketch {
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
       density: 1,
+      noSleep: true,
       friction: 0.2,
       restitution: 0.2,
       belongsTo: 1, // The bits of the collision groups to which the shape belongs.
@@ -148,8 +174,12 @@ export default class Sketch {
   render() {
     this.time++;
     this.world.step();
+    this.body.awake();
+    this.body.setPosition(this.point);
     this.Object.position.copy( this.body.getPosition());
     this.Object.quaternion.copy( this.body.getQuaternion());
+
+
     this.bodies.forEach(b => {
       b.mesh.position.copy( b.body.getPosition());
       b.mesh.quaternion.copy( b.body.getQuaternion());
