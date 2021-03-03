@@ -1,213 +1,72 @@
-import './style.css';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from 'three';
-import GLTFLoader from 'three-gltf-loader';
-import model from './models/amongus.glb'
+import { fragmentShader } from './shaders/fragment.js';
+import { vertexShader } from './shaders/vertex.js'
+import './style.css';
+const OrbitControls = require('three-orbitcontrols');
 
+export default class Sketch {
+  constructor(selector) {
+    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setClearColor(0xeeeeee, 1);
+    this.container = document.getElementById('container');
+    this.container.appendChild( this.renderer.domElement );
+    this.width =  this.container.offsetWidth;
+    this.height = this.container.offsetHeight;
 
-let mixer;
+    this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 1000 );
+    this.camera.position.set(0, 0, 2);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.scene = new THREE.Scene();
+    this.setupResize();
+    this.addMesh();
+    this.time = 0;
+    this.resize();
+    this.render();
+  }
 
-let renderer;
-let playerDirection = 0;
-let angularSpeed = 0.01;
-let playerSpeed = 0.075;
-let playerBackwardsSpeed = playerSpeed * 0.4;
-let person; 
-let animates;
-let camera;
-let scene;
+  setupResize() {
+    window.addEventListener('resize', this.resize.bind(this))
+  }
 
+  resize() {
+    this.width = this.container.offsetWidth;
+    this.height = this.container.offsetHeight;
+    this.renderer.setSize(this.width, this.height);
+    this.camera.aspect = this.width / this.height;
 
+    this.camera.updateProjectionMatrix();
+  }
 
-let  playerIsMovingForward = 0;
-let  playerIsMovingBackwards = 0;
-let  playerIsRotatingLeft = 0;
-let  playerIsRotatingRight = 0;
-let  playerGoesUp = 0;
-let  playerGoesDown = 0;
-
-const clock = new THREE.Clock();
-const init = () => {
-    let pos;
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color('skyblue');
-    scene.fog = new THREE.Fog(0xa0a0a0, 10, 50);
-    
-    const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-    hemiLight.position.set( 0, 5, 0 );
-    scene.add( hemiLight );
-    
-    let dirLight = new THREE.DirectionalLight( 0xffffff);
-        dirLight.position.set( 3, 10, 10 );
-        dirLight.castShadow = true;
-        dirLight.shadow.camera.top = 2;
-        dirLight.shadow.camera.bottom = - 2;
-        dirLight.shadow.camera.left = - 2;
-        dirLight.shadow.camera.right = 2;
-        dirLight.shadow.camera.near = 0.1;
-        dirLight.shadow.camera.far = 40;
-        scene.add( dirLight );
-        
-        const mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 100, 100 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
-        mesh.rotation.x = - Math.PI / 2;
-        mesh.receiveShadow = true;
-        scene.add( mesh );
-
-         const loader = new GLTFLoader(); 
-           loader.load(model, gltf => {
-            person = gltf.scene;
-            animates = gltf.animations;
-            pos = person.position;
-                
-            person.traverse(object => {
-                if (object.isMesh) {object.castShadow = true} ;
-              
-            });
-            
-            mixer = new THREE.AnimationMixer(person);
-            animates.forEach((clip) => {
-                mixer.clipAction(clip).play();
-            })
-    
-            person.scale.set(0.007,0.007,0.007 );
-            scene.add(person);
-            
-            camera.lookAt(pos)
-
-             window.addEventListener('keydown', () => {
-                playerIsMovingForward = 0;
-                playerIsMovingBackwards = 0;
-                playerIsRotatingLeft = 0;
-                playerIsRotatingRight = 0;
-                playerGoesUp = 0;
-                playerGoesDown = 0;
-            
-            })
-            
-            
-            const updatePlayer = () => {
-                if(playerIsRotatingLeft){ // rotate left
-                    playerDirection -= angularSpeed;
-                }
-                if(playerIsRotatingRight){ // rotate right
-                    playerDirection += angularSpeed;
-                }
-                if(playerIsRotatingRight || playerIsRotatingLeft){
-                    setPlayerDirection();
-            
-                }
-                if(playerIsMovingForward){ // go forward
-                    moveForward(playerSpeed);
-                    let delta = clock.getDelta();
-                    if ( mixer ) mixer.update( delta );
-            
-                }
-                if(playerIsMovingBackwards){ // go backwards
-                    moveForward(-playerBackwardsSpeed);
-            
-                }
-            }
-            
-            window.addEventListener('keydown', (e) => {
-                const Z = 90;
-                const S = 83;
-                const Q = 81;
-                const D = 68;
-                const minus = 189;
-                const plus = 187;
-            
-                const k = e.keyCode;
-                console.log(k);
-                if(k == Q){ // rotate left
-                    playerIsRotatingLeft = 1;
-                }
-                if(k == D){ // rotate right
-                    playerIsRotatingRight = 1;
-                }
-                if(k == Z){ // go forward
-                    playerIsMovingForward = 1;
-                }
-                if(k == S){ // go back 
-                    playerIsMovingBackwards = 1;
-                }
-            
-            });
-            
-            const animate = () => {
-                requestAnimationFrame( animate );
-                updatePlayer();
-            
-                renderer.render( scene, camera );    
-            
-            };
-            
-            const moveForward = speed => {
-                const delta_x = speed * Math.cos(playerDirection);
-                const delta_z = speed * Math.sin(playerDirection);
-                const new_x = camera.position.x + delta_x;
-                const new_z = camera.position.z + delta_z;
-                camera.position.x = new_x;
-                camera.position.z = new_z;
-            
-                const new_dx = pos.x + delta_x;
-                const new_dz = pos.z + delta_z;
-                pos.x = new_dx;
-                pos.z = new_dz;
-               camera.lookAt(pos); 
-            }
-            
-            
-            const setPlayerDirection = () => {
-                //direction changed.
-                const delta_x = playerSpeed * Math.cos(playerDirection);
-                const delta_z = playerSpeed * Math.sin(playerDirection);
-            
-                const new_dx = camera.position.x + delta_x;
-                const new_dz = camera.position.z + delta_z;
-                pos.x = new_dx;
-                pos.z = new_dz;
-                console.log(pos);
-               camera.lookAt(pos); 
-            };
-            
-            animate();
-        },  
-        
-        error => { console.log( error )});
-    
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 100 );
-    
-    renderer = new THREE.WebGLRenderer({antialias: true});    
-    const controls = new OrbitControls(camera, renderer.domElement);
-
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.shadowMap.enabled = true;
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
-    
-    
-    
-    
-    window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-    
-        camera.updateProjectionMatrix();
+  addMesh() {
+    this.geometry = new THREE.PlaneBufferGeometry(1,1);
+    this.geometry = new THREE.OctahedronBufferGeometry(1)
+    this.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide});
+    this.material = new THREE.ShaderMaterial({
+      fragmentShader: fragmentShader,
+      vertexShader: vertexShader,
+      uniforms: {
+        time: {type:'f', value:0},
+        resolution:{type: "v4", value: new THREE.Vector4()} ,
+        uvRate1: {
+          value: new THREE.Vector2(1,1)
+        }
+      },
+      side: THREE.DoubleSide
     })
-    camera.position.set( -2, 2.5 , 2.5)
-    
-   
-    controls.minDistance = 1;
-    controls.maxDistance = 1000;
-    
-    
+    this.mesh = new THREE.Mesh( this.geometry, this.material );
+    this.scene.add( this.mesh );
+  }
 
+
+
+  render() {
+    this.time++;
+
+    this.renderer.render( this.scene, this.camera );
+    window.requestAnimationFrame(this.render.bind(this));
+  }
 }
 
+new Sketch();
 
-
-
-
-init();

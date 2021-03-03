@@ -12,18 +12,22 @@ html {
 *::after {
   box-sizing: inherit;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+}
 /* stylelint-enable */
 
 body {
-  font-size: 2rem;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  margin: 0;
+  overscroll-behavior: none;
+}
+
+.container {
+  width: 100vw;
   height: 100vh;
 }
 
 canvas {
   display: block;
 }
-
-/** Dit is hier wat commentaar, dat er uit moet in production**/
-
