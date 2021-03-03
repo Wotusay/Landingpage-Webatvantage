@@ -36,8 +36,11 @@
     "not dead"
   ],
   "dependencies": {
+    "dat.gui": "^0.7.7",
     "gltf-webpack-loader": "^1.0.6",
+    "oimo": "^1.0.9",
     "three": "^0.120.1",
+    "three-dat.gui": "^2.0.7",
     "three-gltf-loader": "^1.111.0",
     "three-orbitcontrols": "^2.110.3"
   }
