@@ -39,6 +39,7 @@ export default class Sketch {
   }
 
   fontMaker() {
+    // Regular
     this.loader.load('../src/assets/fonts/HalyardDisplay-Regular.json', (font) => {
       let geometry = new THREE.TextGeometry( 'online expierences', {
         font: font,
@@ -47,14 +48,29 @@ export default class Sketch {
 
       } );
 
+     this.world.add({
+        type:'box', // type of shape : sphere, box, cylinder
+        size:[5.5,0.45,0.1], // size of shape
+        pos:[0,0,0], // start position in degree
+        rot:[0,0,0], // start rotation in degree
+        move:false, // dynamic or statique
+        density: 1,
+        friction: 0.2,
+        noSleep:true,
+        restitution: 4,
+        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
+        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
+        });
+
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-2.5,0,0)
-
+      this.fontBold.position.set(-2.6,-0.2,0);
       this.scene.add(this.fontBold);
 
+
     });
+    // Light
     this.loader.load('../src/assets/fonts/HalyardDisplay-ExtraLight.json', (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
@@ -62,11 +78,22 @@ export default class Sketch {
         height: 0.1,
       });
 
-      geometry.computeBoundingBox();
+      this.world.add({
+        type:'box', // type of shape : sphere, box, cylinder
+        size:[3,0.9,0.3], // size of shape
+        pos:[0,0.5,0], // start position in degree
+        rot:[0,0,0], // start rotation in degree
+        move:false, // dynamic or statique
+        density: 1,
+        friction: 0.2,
+        noSleep:true,
+        restitution: 4,
+        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
+        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
+        });
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontLight.position.set(-1.5,0.5,0)
-
+      this.fontLight.position.set(-1.5,0.5,0);
       this.scene.add(this.fontLight);
     });
 
@@ -74,7 +101,7 @@ export default class Sketch {
 
   mouseClick() {
     let that = this;
-    window.addEventListener('click', (event) => {
+    window.addEventListener('click', () => {
       that.createBody();
     },false);
   }
@@ -167,17 +194,17 @@ export default class Sketch {
       density: 1,
       noSleep: true,
       friction: 0.2,
-      restitution: 0.9,
+      restitution: 1,
       belongsTo: 1, // The bits of the collision groups to which the shape belongs.
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
 
 
-    this.groundBottom = this.world.add({size:[40,1,40], pos: [0,-4.5,0]});
-    this.groundTop = this.world.add({size:[40,1,40], pos: [0,4.5,0]});
+    this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
+    this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,4.5,0]});
 
-    this.groundLeft = this.world.add({size:[1,40,40], pos: [-6,0,0]});
-    this.groundLeft = this.world.add({size:[1,40,40], pos: [6,0,0]});
+    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-6,0,0]  });
+    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [6,0,0]});
 
 
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
@@ -231,8 +258,8 @@ export default class Sketch {
       b.body.awake();
       b.mesh.position.copy( b.body.getPosition());
       b.mesh.quaternion.copy( b.body.getQuaternion());
+    });
 
-    })
     this.renderer.render( this.scene, this.camera );
     window.requestAnimationFrame(this.render.bind(this));
   }
