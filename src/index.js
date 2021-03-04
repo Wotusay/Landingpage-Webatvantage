@@ -5,7 +5,6 @@ import * as dat from 'dat.gui';
 import './style.css';
 
 
-const OrbitControls = require('three-orbitcontrols');
 
 import * as OIMO from 'oimo';
 
@@ -13,7 +12,7 @@ import * as OIMO from 'oimo';
 
 export default class Sketch {
   constructor(selector) {
-    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance" } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setClearColor(0x444444, 1);
 
@@ -27,7 +26,6 @@ export default class Sketch {
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 1000 );
     this.camera.position.set(0, 0, 6);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
 
@@ -37,15 +35,23 @@ export default class Sketch {
     this.time = 0;
     this.mouseMove();
     this.resize();
+    this.mouseClick();
     this.render();
-    this.settings();
+    //this.settings();
 
+  }
+
+  mouseClick() {
+    let that = this;
+    window.addEventListener('click', (event) => {
+      that.createBody();
+    },false);
   }
 
   mouseMove() {
     let that = this;
-    this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshBasicMaterial());
-    window.addEventListener('mousemove', function(event){
+    this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
+    window.addEventListener('mousemove',(event) => {
       that.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       that.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -54,7 +60,6 @@ export default class Sketch {
       let intersects = that.raycaster.intersectObjects([that.testPlane]);
 
       if (intersects.length > 0) {
-        console.log(intersects[0].point);
         that.point = intersects[0].point;
       }
 
@@ -69,7 +74,7 @@ export default class Sketch {
     let that = this;
     this.settings = {
       time: 0,
-      createBody: function() {
+      createBody: () => {
         that.createBody();
       }
     };
@@ -77,8 +82,6 @@ export default class Sketch {
     this.gui = new dat.GUI();
     this.gui.add(this.settings, "time", 0,100,0.01);
     this.gui.add(this.settings, "createBody");
-
-    console.log()
   }
 
   resize() {
@@ -93,7 +96,7 @@ export default class Sketch {
   addMesh() {
     this.geometry = new THREE.PlaneBufferGeometry(1,1);
     this.geometry = new THREE.BoxBufferGeometry(1,1,1,1)
-    this.material = new THREE.MeshNormalMaterial({side: THREE.DoubleSide});
+    this.material1 = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
     this.material = new THREE.ShaderMaterial({
       fragmentShader: fragmentShader,
       vertexShader: vertexShader,
@@ -106,8 +109,8 @@ export default class Sketch {
       },
       side: THREE.DoubleSide
     })
-    this.Object = new THREE.Mesh( this.geometry, this.material );
-    this.scene.add( this.Object );
+    this.Object = new THREE.Mesh( this.geometry, this.material1 );
+    //this.scene.add( this.Object );
   }
 
   physics() {
@@ -120,7 +123,7 @@ export default class Sketch {
       worldscale: 1, // scale full world
       random: true,  // randomize sample
       info: false,   // calculate statistic or not
-      gravity: [0,0,0]
+      gravity: [0,-9.7,0]
     });
 
     this.body = this.world.add({
@@ -138,7 +141,17 @@ export default class Sketch {
       });
 
 
-    this.ground = this.world.add({size:[40,1,40], pos: [0,-4.5,0]})
+    this.groundBottom = this.world.add({size:[40,1,40], pos: [0,-4.5,0]});
+    this.groundTop = this.world.add({size:[40,1,40], pos: [0,4.5,0]});
+
+    this.groundLeft = this.world.add({size:[1,40,40], pos: [-6,0,0]});
+    this.groundLeft = this.world.add({size:[1,40,40], pos: [6,0,0]});
+
+
+    this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
+    this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
+
+
   }
 
 
@@ -147,11 +160,12 @@ export default class Sketch {
     let body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
       size:[1,1,1], // size of shape
-      pos:[0,0,0], // start position in degree
+      pos:[this.point.x, this.point.y, this.point.z], // start position in degree
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
       density: 1,
       friction: 0.2,
+      noSleep:true,
       restitution: 0.2,
       belongsTo: 1, // The bits of the collision groups to which the shape belongs.
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
@@ -162,12 +176,13 @@ export default class Sketch {
         new THREE.MeshBasicMaterial({color:0xff0000})
       );
 
+      mesh.position.set(this.point.x, this.point.y, this.point.z)
+
 
       o.body = body;
       o.mesh = mesh;
 
-      this.scene.add(mesh)
-
+      this.scene.add(mesh);
       this.bodies.push(o)
   }
 
@@ -181,8 +196,10 @@ export default class Sketch {
 
 
     this.bodies.forEach(b => {
+      b.body.awake();
       b.mesh.position.copy( b.body.getPosition());
       b.mesh.quaternion.copy( b.body.getQuaternion());
+
     })
     this.renderer.render( this.scene, this.camera );
     window.requestAnimationFrame(this.render.bind(this));
