@@ -1,5 +1,6 @@
 @import './css/reset.css';
 
+
 html {
   box-sizing: border-box;
   font-size: 62.5%;
@@ -20,7 +21,11 @@ html {
 /* stylelint-enable */
 
 body {
+  font-family: halyard-display, sans-serif;
+  font-weight: 400;
+  font-style: normal;
   overscroll-behavior: none;
+  background-color: white;
 }
 
 .container {
@@ -30,4 +35,26 @@ body {
 
 canvas {
   display: block;
+}
+
+h1 {
+  display: grid;
+  justify-items: center;
+  z-index: 1;
+  font-family: halyard-display, sans-serif;
+  font-weight: 200;
+  font-style: normal;
+  overscroll-behavior: none;
+  font-size: 6rem;
+  position: absolute;
+  margin-top: 37vh;
+  margin-left: 35vw;
+  opacity: 0;
+}
+
+span {
+  font-family: halyard-display, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  overscroll-behavior: none;
 }

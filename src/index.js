@@ -4,17 +4,12 @@ import { vertexShader } from './shaders/vertex.js';
 import * as dat from 'dat.gui';
 import './style.css';
 
-
-
 import * as OIMO from 'oimo';
 
-
-
 export default class Sketch {
-  constructor(selector) {
-    this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance" } );
+  constructor(date) {
+    this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setClearColor(0x444444, 1);
 
     this.container = document.getElementById('container');
     this.container.appendChild( this.renderer.domElement );
@@ -28,8 +23,10 @@ export default class Sketch {
     this.camera.position.set(0, 0, 6);
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
+    this.loader = new THREE.FontLoader();
 
     this.setupResize();
+    this.fontMaker();
     this.physics();
     this.addMesh();
     this.time = 0;
@@ -38,6 +35,40 @@ export default class Sketch {
     this.mouseClick();
     this.render();
     //this.settings();
+
+  }
+
+  fontMaker() {
+    this.loader.load('../src/assets/fonts/HalyardDisplay-Regular.json', (font) => {
+      let geometry = new THREE.TextGeometry( 'online expierences', {
+        font: font,
+        size: 0.5,
+        height: 0.1,
+
+      } );
+
+      geometry.computeBoundingBox();
+
+      this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
+      this.fontBold.position.set(-2.5,0,0)
+
+      this.scene.add(this.fontBold);
+
+    });
+    this.loader.load('../src/assets/fonts/HalyardDisplay-ExtraLight.json', (font) => {
+      let geometry = new THREE.TextGeometry( 'tailor-made', {
+        font: font,
+        size: 0.5,
+        height: 0.1,
+      });
+
+      geometry.computeBoundingBox();
+
+      this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
+      this.fontLight.position.set(-1.5,0.5,0)
+
+      this.scene.add(this.fontLight);
+    });
 
   }
 
@@ -61,6 +92,7 @@ export default class Sketch {
 
       if (intersects.length > 0) {
         that.point = intersects[0].point;
+        console.log(that.point);
       }
 
     }, false);
@@ -123,7 +155,7 @@ export default class Sketch {
       worldscale: 1, // scale full world
       random: true,  // randomize sample
       info: false,   // calculate statistic or not
-      gravity: [0,-9.7,0]
+      gravity: [0,0,0]
     });
 
     this.body = this.world.add({
@@ -135,7 +167,7 @@ export default class Sketch {
       density: 1,
       noSleep: true,
       friction: 0.2,
-      restitution: 0.2,
+      restitution: 0.9,
       belongsTo: 1, // The bits of the collision groups to which the shape belongs.
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
@@ -151,7 +183,7 @@ export default class Sketch {
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
     this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
 
-
+    //this.back = this.world.add({size:[5,1.4,1], pos: [0,0.5,0]});
   }
 
 
@@ -205,6 +237,10 @@ export default class Sketch {
     window.requestAnimationFrame(this.render.bind(this));
   }
 }
+
+let date =  Date();
+
+console.log(date);
 
 new Sketch();
 
