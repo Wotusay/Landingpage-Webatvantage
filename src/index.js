@@ -22,12 +22,16 @@ export default class Sketch {
     this.height = this.container.offsetHeight;
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
+    this.light = new THREE.AmbientLight( 0xe8e8e8 );
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
+
+    this.scene.add(this.light);
+
 
     this.setupResize();
     this.fontMaker();
@@ -318,7 +322,7 @@ export default class Sketch {
 
       let mesh = new THREE.Mesh(
         this.dateCheckerForModels(size),
-        new THREE.MeshBasicMaterial({color:color})
+        new THREE.MeshLambertMaterial({color:color,})
       );
 
       mesh.position.set(this.point.x, this.point.y, this.point.z)
