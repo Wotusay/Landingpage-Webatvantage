@@ -38,6 +38,43 @@ export default class Sketch {
 
   }
 
+  setColorForBlock() {
+    let numberGen = Math.floor(Math.random() * 3);
+    let color;
+    switch (numberGen) {
+      case 0 :
+        color = 0x57BDA0;
+        break;
+      case 1 :
+        color = 0x7ED7FA;
+        break;
+      case 2 :
+        color = 0xE17474;
+        break;
+    }
+
+    return color;
+  }
+
+
+  setSizeForBlock() {
+    let numberGen = Math.floor(Math.random() * 3);
+    let size;
+    switch (numberGen) {
+      case 0 :
+        size = 0.5;
+        break;
+      case 1 :
+        size = 1;
+        break;
+      case 2 :
+        size = 1.5;
+        break;
+    }
+
+    return size;
+  }
+
   fontMaker() {
     // Regular
     this.loader.load('../src/assets/fonts/HalyardDisplay-Regular.json', (font) => {
@@ -92,7 +129,7 @@ export default class Sketch {
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
 
-      this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
+      this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x14161D}));
       this.fontLight.position.set(-1.5,0.5,0);
       this.scene.add(this.fontLight);
     });
@@ -102,7 +139,9 @@ export default class Sketch {
   mouseClick() {
     let that = this;
     window.addEventListener('click', () => {
-      that.createBody();
+      let size = that.setSizeForBlock();
+      let color = that.setColorForBlock();
+      that.createBody(size,color);
     },false);
   }
 
@@ -119,7 +158,6 @@ export default class Sketch {
 
       if (intersects.length > 0) {
         that.point = intersects[0].point;
-        console.log(that.point);
       }
 
     }, false);
@@ -214,11 +252,11 @@ export default class Sketch {
   }
 
 
-  createBody() {
+  createBody(size,color) {
     let o = {};
     let body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
-      size:[1,1,1], // size of shape
+      size:[size,size,size], // size of shape
       pos:[this.point.x, this.point.y, this.point.z], // start position in degree
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
@@ -231,8 +269,8 @@ export default class Sketch {
       });
 
       let mesh = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(1),
-        new THREE.MeshBasicMaterial({color:0xff0000})
+        new THREE.BoxBufferGeometry(size,size,size),
+        new THREE.MeshBasicMaterial({color:color})
       );
 
       mesh.position.set(this.point.x, this.point.y, this.point.z)
