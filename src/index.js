@@ -112,7 +112,7 @@ export default class Sketch {
 
   fontMaker() {
     // Regular
-    this.loader.load(fontPathOne, (font) => {
+    this.loader.load(fontPathTwo, (font) => {
       let geometry = new THREE.TextGeometry( 'online expierences', {
         font: font,
         size: 0.5,
@@ -143,7 +143,7 @@ export default class Sketch {
 
     });
     // Light
-    this.loader.load(fontPathTwo, (font) => {
+    this.loader.load(fontPathOne, (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
