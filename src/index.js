@@ -228,7 +228,7 @@ export default class Sketch {
 
   addMesh() {
     this.geometry = new THREE.PlaneBufferGeometry(1,1);
-    this.geometry = new THREE.BoxBufferGeometry(1,1,1,1)
+    this.geometry = new THREE.OctahedronBufferGeometry(1)
     this.material1 = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
     this.material = new THREE.ShaderMaterial({
       fragmentShader: fragmentShader,
@@ -241,7 +241,19 @@ export default class Sketch {
         }
       },
       side: THREE.DoubleSide
-    })
+    });
+
+    //let pos = this.geometry.attributes.position;
+    //let count = pos.length / 3;
+
+    //let bary = [];
+
+    //for (let i = 0; i < count; i++) {
+    //  bary.push(0,0,1, 0,1,0, 1,0,0);
+    //}
+
+    //bary =  new Float32Array(bary);
+    //this.geometry.setAttribute('barycentric', new THREE.BufferAttribute(bary,3));
     this.Object = new THREE.Mesh( this.geometry, this.material1 );
     //this.scene.add( this.Object );
   }
@@ -277,8 +289,8 @@ export default class Sketch {
     this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
     this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,4.5,0]});
 
-    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-6,0,0]  });
-    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [6,0,0]});
+    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-7,0,0]  });
+    this.groundRight = this.world.add({restitution: 1, size:[1,40,40], pos: [7,0,0]});
 
 
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
