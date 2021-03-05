@@ -108,7 +108,7 @@ export default class Sketch {
 
   fontMaker() {
     // Regular
-    this.loader.load('../src/assets/fonts/HalyardDisplay-Regular.json', (font) => {
+    this.loader.load('./public/assets/fonts/HalyardDisplay-Regular.json', (font) => {
       let geometry = new THREE.TextGeometry( 'online expierences', {
         font: font,
         size: 0.5,
@@ -139,7 +139,7 @@ export default class Sketch {
 
     });
     // Light
-    this.loader.load('../src/assets/fonts/HalyardDisplay-ExtraLight.json', (font) => {
+    this.loader.load('./public/assets/fonts/HalyardDisplay-ExtraLight.json', (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
