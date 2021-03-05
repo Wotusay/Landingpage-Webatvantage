@@ -24,6 +24,15 @@ module.exports = (env, {mode}) => {
           }
         },
         {
+          type: 'javascript/auto',
+          test: /\.json$/,
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: './assets'
+          }
+        },
+        {
           test: /\.html$/,
           use: [
             {
