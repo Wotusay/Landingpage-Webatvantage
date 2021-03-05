@@ -8,6 +8,7 @@ import * as OIMO from 'oimo';
 
 export default class Sketch {
   constructor(date) {
+    this.date = date;
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -17,7 +18,6 @@ export default class Sketch {
     this.height = this.container.offsetHeight;
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
-
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 1000 );
     this.camera.position.set(0, 0, 6);
@@ -36,6 +36,37 @@ export default class Sketch {
     this.render();
     //this.settings();
 
+  }
+
+  dateCheckerForModels(size) {
+    let month = this.date.getMonth();
+    let model;
+    switch (month) {
+      case 11 :
+      case 0 :
+      case 1 :
+        model = new THREE.SphereBufferGeometry(size / 1.5);
+        break;
+      case 2 :
+      case 3 :
+      case 4 :
+        model = new THREE.BoxBufferGeometry(size,size,size);
+        break;
+      case 5 :
+      case 6 :
+      case 7 :
+        model = new THREE.CylinderBufferGeometry(0,size/2,size/2);
+        break;
+      case 8 :
+      case 9 :
+      case 10 :
+        model = new THREE.TetrahedronBufferGeometry(size/1.5);
+        break;
+      default:
+        model = new THREE.BoxBufferGeometry(size,size,size);
+    }
+
+    return model;
   }
 
   setColorForBlock() {
@@ -179,6 +210,7 @@ export default class Sketch {
     this.gui = new dat.GUI();
     this.gui.add(this.settings, "time", 0,100,0.01);
     this.gui.add(this.settings, "createBody");
+
   }
 
   resize() {
@@ -269,7 +301,7 @@ export default class Sketch {
       });
 
       let mesh = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(size,size,size),
+        this.dateCheckerForModels(size),
         new THREE.MeshBasicMaterial({color:color})
       );
 
@@ -303,9 +335,6 @@ export default class Sketch {
   }
 }
 
-let date =  Date();
-
-console.log(date);
-
-new Sketch();
+let date = new Date();
+new Sketch(date);
 
