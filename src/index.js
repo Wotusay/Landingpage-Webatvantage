@@ -23,7 +23,7 @@ export default class Sketch {
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
 
-    this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 1000 );
+    this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
@@ -116,7 +116,7 @@ export default class Sketch {
       let geometry = new THREE.TextGeometry( 'online expierences', {
         font: font,
         size: 0.5,
-        height: 0.1,
+        height: 0.04,
 
       } );
 
@@ -147,7 +147,7 @@ export default class Sketch {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
-        height: 0.1,
+        height: 0.04,
       });
 
       this.world.add({
