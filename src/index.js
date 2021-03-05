@@ -6,6 +6,10 @@ import './style.css';
 
 import * as OIMO from 'oimo';
 
+const fontPathOne = require('./assets/fonts/HalyardDisplay-ExtraLight.json');
+const fontPathTwo = require('./assets/fonts/HalyardDisplay-Regular.json');
+
+
 export default class Sketch {
   constructor(date) {
     this.date = date;
@@ -108,7 +112,7 @@ export default class Sketch {
 
   fontMaker() {
     // Regular
-    this.loader.load('./public/assets/fonts/HalyardDisplay-Regular.json', (font) => {
+    this.loader.load(fontPathOne, (font) => {
       let geometry = new THREE.TextGeometry( 'online expierences', {
         font: font,
         size: 0.5,
@@ -139,7 +143,7 @@ export default class Sketch {
 
     });
     // Light
-    this.loader.load('./public/assets/fonts/HalyardDisplay-ExtraLight.json', (font) => {
+    this.loader.load(fontPathTwo, (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
