@@ -441,7 +441,7 @@ export default class Sketch {
       let mesh;
 
         setTimeout(() => {
-          if (month === 2 ) {
+          if (month === 2 || month === 11 ) {
           mesh = this.model.test;
           mesh.scale.set(size/1.5,size/1.5,size/1.5);
         } else {
