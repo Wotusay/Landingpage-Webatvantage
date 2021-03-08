@@ -100,25 +100,25 @@ export default class Sketch {
     let position;
     switch (numberGen) {
       case 0 :
-        position = {x:-3 ,y:3 ,z:0};
+        position = {x:-3 ,y:5 ,z:0};
         break;
       case 1 :
-        position = {x:-2 ,y:3 ,z:0};
+        position = {x:-2 ,y:5 ,z:0};
         break;
       case 2 :
-        position = {x:-1 ,y:3 ,z:0};
+        position = {x:-1 ,y:5 ,z:0};
         break;
       case 3 :
-        position = {x:0 ,y:3 ,z:0};
+        position = {x:0 ,y:5 ,z:0};
         break;
       case 4 :
-        position = {x:1 ,y:3 ,z:0};
+        position = {x:1 ,y:5 ,z:0};
         break;
       case 5 :
-        position = {x:2 ,y:3 ,z:0};
+        position = {x:2 ,y:5 ,z:0};
         break;
       case 6 :
-        position = {x:3 ,y:3 ,z:0};
+        position = {x:3 ,y:5 ,z:0};
         break;
     }
 
@@ -343,7 +343,7 @@ export default class Sketch {
 
 
     this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
-    this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,4.5,0]});
+    this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,8.5,0]});
 
     this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-7,0,0]  });
     this.groundRight = this.world.add({restitution: 1, size:[1,40,40], pos: [7,0,0]});
