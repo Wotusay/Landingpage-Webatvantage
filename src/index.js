@@ -28,6 +28,7 @@ export default class Sketch {
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
+    this.fontLight;
 
     this.scene.add(this.light);
 
@@ -38,12 +39,12 @@ export default class Sketch {
     this.addMesh();
     this.time = 0;
     this.mouseMove();
-    this.resize();
     this.onLoad();
     //this.mouseClick();
     this.render();
     //this.settings();
 
+    this.resize();
   }
 
   dateCheckerForModels(size) {
@@ -154,7 +155,7 @@ export default class Sketch {
 
       } );
 
-     this.world.add({
+     this.fontbodyReg = this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
         size:[5.5,0.45,0.1], // size of shape
         pos:[0,0,0], // start position in degree
@@ -184,7 +185,7 @@ export default class Sketch {
         height: 0.04,
       });
 
-      this.world.add({
+      this.fontbodyLight =  this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
         size:[3,0.9,0.3], // size of shape
         pos:[0,0.65,0], // start position in degree
@@ -238,6 +239,7 @@ export default class Sketch {
   mouseMove() {
     let that = this;
     this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
+    // Desktop
     window.addEventListener('mousemove',(event) => {
       that.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       that.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -249,6 +251,25 @@ export default class Sketch {
       if (intersects.length > 0) {
         that.point = intersects[0].point;
         console.log(that.point);
+      }
+
+    }, false);
+
+    // For mobile
+    window.addEventListener('touchmove',(e) => {
+
+      let x = e.touches[0].clientX;
+      let y = e.touches[0].clientY;
+
+      that.mouse.x = (x / window.innerWidth) * 2 - 1;
+      that.mouse.y = - (y / window.innerHeight) * 2 + 1;
+
+      that.raycaster.setFromCamera(that.mouse, that.camera);
+
+      let intersects = that.raycaster.intersectObjects([that.testPlane]);
+
+      if (intersects.length > 0) {
+        that.point = intersects[0].point;
       }
 
     }, false);
@@ -278,8 +299,49 @@ export default class Sketch {
     this.height = this.container.offsetHeight;
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
-
     this.camera.updateProjectionMatrix();
+
+    if(this.fontLight === undefined ) {
+      setTimeout(() => {
+        this.resizeElements(this.width);
+      },220);
+    }
+    else {
+      this.resizeElements(this.width);
+    }
+
+  }
+
+
+  resizeElements(width) {
+    if (width >= 320 && width <= 420 ) {
+      this.fontLight.scale.set(0.5,0.5,0.5);
+      this.fontLight.position.set(-0.75,0.35,0);
+      this.fontBold.scale.set(0.5,0.5,0.5);
+      this.fontBold.position.set(-1.35,0,0);
+    }
+
+    if (width >= 420 && width <= 520 ) {
+      this.fontLight.scale.set(0.7,0.7,0.7);
+      this.fontLight.position.set(-1,0.45,0);
+      this.fontBold.scale.set(0.7,0.7,0.7);
+      this.fontBold.position.set(-1.8,0,0);
+    }
+
+    if (width >= 520 && width <= 768) {
+      this.fontLight.scale.set(0.9,0.9,0.9);
+      this.fontLight.position.set(-1.35,0.75,0);
+      this.fontBold.scale.set(0.9,0.9,0.9);
+      this.fontBold.position.set(-2.4,0,0);
+    }
+
+    if (width >= 768) {
+      this.fontLight.scale.set(1,1,1);
+      this.fontLight.position.set(-1.5,0.65,0);
+      this.fontBold.scale.set(1,1,1);
+      this.fontBold.position.set(-2.65,-0.2,0);
+    }
+
   }
 
   addMesh() {
@@ -298,20 +360,7 @@ export default class Sketch {
       },
       side: THREE.DoubleSide
     });
-
-    //let pos = this.geometry.attributes.position;
-    //let count = pos.length / 3;
-
-    //let bary = [];
-
-    //for (let i = 0; i < count; i++) {
-    //  bary.push(0,0,1, 0,1,0, 1,0,0);
-    //}
-
-    //bary =  new Float32Array(bary);
-    //this.geometry.setAttribute('barycentric', new THREE.BufferAttribute(bary,3));
     this.Object = new THREE.Mesh( this.geometry, this.material1 );
-    //this.scene.add( this.Object );
   }
 
   physics() {
@@ -341,6 +390,9 @@ export default class Sketch {
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
 
+      //Floors
+
+
 
     this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
     this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,8.5,0]});
@@ -348,11 +400,8 @@ export default class Sketch {
     this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-7,0,0]  });
     this.groundRight = this.world.add({restitution: 1, size:[1,40,40], pos: [7,0,0]});
 
-
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
     this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
-
-    //this.back = this.world.add({size:[5,1.4,1], pos: [0,0.5,0]});
   }
 
 
