@@ -9,7 +9,6 @@ import * as OIMO from 'oimo';
 const fontPathOne = require('./assets/fonts/HalyardDisplay-ExtraLight.json');
 const fontPathTwo = require('./assets/fonts/HalyardDisplay-Regular.json');
 
-
 export default class Sketch {
   constructor(date) {
     this.date = date;
@@ -40,7 +39,8 @@ export default class Sketch {
     this.time = 0;
     this.mouseMove();
     this.resize();
-    this.mouseClick();
+    this.onLoad();
+    //this.mouseClick();
     this.render();
     //this.settings();
 
@@ -95,6 +95,36 @@ export default class Sketch {
     return color;
   }
 
+  setPositionForBlock() {
+    let numberGen = Math.floor(Math.random() * 7);
+    let position;
+    switch (numberGen) {
+      case 0 :
+        position = {x:-3 ,y:3 ,z:0};
+        break;
+      case 1 :
+        position = {x:-2 ,y:3 ,z:0};
+        break;
+      case 2 :
+        position = {x:-1 ,y:3 ,z:0};
+        break;
+      case 3 :
+        position = {x:0 ,y:3 ,z:0};
+        break;
+      case 4 :
+        position = {x:1 ,y:3 ,z:0};
+        break;
+      case 5 :
+        position = {x:2 ,y:3 ,z:0};
+        break;
+      case 6 :
+        position = {x:3 ,y:3 ,z:0};
+        break;
+    }
+
+    return position;
+  }
+
 
   setSizeForBlock() {
     let numberGen = Math.floor(Math.random() * 3);
@@ -104,10 +134,10 @@ export default class Sketch {
         size = 0.5;
         break;
       case 1 :
-        size = 1;
+        size = 0.75;
         break;
       case 2 :
-        size = 1.5;
+        size = 1;
         break;
     }
 
@@ -141,7 +171,7 @@ export default class Sketch {
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-2.6,-0.2,0);
+      this.fontBold.position.set(-2.65,-0.2,0);
       this.scene.add(this.fontBold);
 
 
@@ -157,7 +187,7 @@ export default class Sketch {
       this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
         size:[3,0.9,0.3], // size of shape
-        pos:[0,0.5,0], // start position in degree
+        pos:[0,0.65,0], // start position in degree
         rot:[0,0,0], // start rotation in degree
         move:false, // dynamic or statique
         density: 1,
@@ -169,7 +199,7 @@ export default class Sketch {
         });
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x14161D}));
-      this.fontLight.position.set(-1.5,0.5,0);
+      this.fontLight.position.set(-1.5,0.65,0);
       this.scene.add(this.fontLight);
     });
 
@@ -182,6 +212,27 @@ export default class Sketch {
       let color = that.setColorForBlock();
       that.createBody(size,color);
     },false);
+  }
+
+  onLoad() {
+    let that = this ;
+    window.addEventListener('load', (e) => {
+      const items = 20;
+      let i = 0;
+      const loop = () => {
+        setTimeout(() => {
+          i++;
+          let size = that.setSizeForBlock();
+          let position = that.setPositionForBlock();;
+          let color = that.setColorForBlock();
+          that.createBody(size,color,position);
+          if (i < items ){
+            loop();
+          }
+        }, 250);
+      };
+     loop();
+    });
   }
 
   mouseMove() {
@@ -197,6 +248,7 @@ export default class Sketch {
 
       if (intersects.length > 0) {
         that.point = intersects[0].point;
+        console.log(that.point);
       }
 
     }, false);
@@ -272,7 +324,7 @@ export default class Sketch {
       worldscale: 1, // scale full world
       random: true,  // randomize sample
       info: false,   // calculate statistic or not
-      gravity: [0,0,0]
+      gravity: [0,-8.7,0]
     });
 
     this.body = this.world.add({
@@ -304,12 +356,12 @@ export default class Sketch {
   }
 
 
-  createBody(size,color) {
+  createBody(size,color,position) {
     let o = {};
     let body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
       size:[size,size,size], // size of shape
-      pos:[this.point.x, this.point.y, this.point.z], // start position in degree
+      pos:[position.x, position.y, position.z], // start position in degree
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
       density: 1,
@@ -325,7 +377,7 @@ export default class Sketch {
         new THREE.MeshLambertMaterial({color:color,})
       );
 
-      mesh.position.set(this.point.x, this.point.y, this.point.z)
+      mesh.position.set(position.x, position.y, position.z);
 
 
       o.body = body;
