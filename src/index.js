@@ -24,7 +24,7 @@ export default class Sketch {
     this.height = this.container.offsetHeight;
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
-    this.light = new THREE.AmbientLight( 0xe8e8e8 );
+    this.light = new THREE.AmbientLight( 0xfffffff );
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
@@ -81,7 +81,7 @@ export default class Sketch {
   }
 
 
-  setEggForEaster() {
+  setModelForHoliday() {
     let numberGen = Math.floor(Math.random() * 3);
     let color;
     switch (numberGen) {
@@ -420,10 +420,6 @@ export default class Sketch {
     this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
   }
 
-
-
-
-
    createBody(size,color,position) {
     let month = this.date.getMonth();
     let o = {};
@@ -441,22 +437,13 @@ export default class Sketch {
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
 
-
-
-      this.blueEgg = this.setEggForEaster();
-
+      this.model = this.setModelForHoliday();
       let mesh;
 
         setTimeout(() => {
-
           if (month === 2 ) {
-          console.log(this.blueEgg.test)
-
-          mesh = this.blueEgg.test;
-
-          mesh.scale.set(size/1.5,size/1.5,size/1.5)
-          console.log(mesh.scale)
-
+          mesh = this.model.test;
+          mesh.scale.set(size/1.5,size/1.5,size/1.5);
         } else {
           mesh = new THREE.Mesh(
             this.dateCheckerForModels(size),
