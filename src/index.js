@@ -3,6 +3,9 @@ import { fragmentShader } from './shaders/fragment.js';
 import { vertexShader } from './shaders/vertex.js';
 import * as dat from 'dat.gui';
 import './style.css';
+import BlueModel from './js/blue';
+import RedModel from './js/red';
+import GreenModel from './js/green';
 
 import * as OIMO from 'oimo';
 
@@ -31,7 +34,6 @@ export default class Sketch {
     this.fontLight;
 
     this.scene.add(this.light);
-
 
     this.setupResize();
     this.fontMaker();
@@ -76,6 +78,24 @@ export default class Sketch {
     }
 
     return model;
+  }
+
+
+  setEggForEaster() {
+    let numberGen = Math.floor(Math.random() * 3);
+    let color;
+    switch (numberGen) {
+      case 0 :
+        color = new BlueModel();
+        break;
+      case 1 :
+        color = new GreenModel() ;
+        break;
+      case 2 :
+        color = new RedModel();
+        break;
+    }
+    return color;
   }
 
   setColorForBlock() {
@@ -126,7 +146,6 @@ export default class Sketch {
     return position;
   }
 
-
   setSizeForBlock() {
     let numberGen = Math.floor(Math.random() * 3);
     let size;
@@ -174,9 +193,9 @@ export default class Sketch {
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
       this.fontBold.position.set(-2.65,-0.2,0);
       this.scene.add(this.fontBold);
-
-
     });
+
+
     // Light
     this.loader.load(fontPathOne, (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
@@ -391,9 +410,6 @@ export default class Sketch {
       });
 
       //Floors
-
-
-
     this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
     this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,8.5,0]});
 
@@ -405,7 +421,11 @@ export default class Sketch {
   }
 
 
-  createBody(size,color,position) {
+
+
+
+   createBody(size,color,position) {
+    let month = this.date.getMonth();
     let o = {};
     let body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
@@ -421,19 +441,40 @@ export default class Sketch {
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
 
-      let mesh = new THREE.Mesh(
-        this.dateCheckerForModels(size),
-        new THREE.MeshLambertMaterial({color:color,})
-      );
-
-      mesh.position.set(position.x, position.y, position.z);
 
 
-      o.body = body;
-      o.mesh = mesh;
+      this.blueEgg = this.setEggForEaster();
 
-      this.scene.add(mesh);
-      this.bodies.push(o)
+      let mesh;
+
+        setTimeout(() => {
+
+          if (month === 2 ) {
+          console.log(this.blueEgg.test)
+
+          mesh = this.blueEgg.test;
+
+          mesh.scale.set(size/1.5,size/1.5,size/1.5)
+          console.log(mesh.scale)
+
+        } else {
+          mesh = new THREE.Mesh(
+            this.dateCheckerForModels(size),
+            new THREE.MeshLambertMaterial({color:color})
+          );
+        }
+
+        mesh.position.set(position.x, position.y, position.z);
+        console.log(mesh.position.x)
+
+
+        o.body = body;
+        o.mesh = mesh;
+
+        this.scene.add(mesh);
+        this.bodies.push(o)
+
+        }, 10)
   }
 
   render() {
@@ -443,7 +484,6 @@ export default class Sketch {
     this.body.setPosition(this.point);
     this.Object.position.copy( this.body.getPosition());
     this.Object.quaternion.copy( this.body.getQuaternion());
-
 
     this.bodies.forEach(b => {
       b.body.awake();
@@ -458,4 +498,3 @@ export default class Sketch {
 
 let date = new Date();
 new Sketch(date);
-
