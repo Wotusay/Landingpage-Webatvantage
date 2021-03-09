@@ -4,9 +4,9 @@ import { vertexShader } from './shaders/vertex.js';
 import * as dat from 'dat.gui';
 import './style.css';
 
-import BlueModel from './js/blue';
-import RedModel from './js/red';
-import GreenModel from './js/green';
+import BlueModel from './js/BlueEgg';
+import RedModel from './js/RedEgg';
+import GreenModel from './js/GreenEgg';
 import BunnyModel from './js/bunny';
 
 
@@ -27,7 +27,7 @@ export default class Sketch {
     this.height = this.container.offsetHeight;
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
-    this.light = new THREE.AmbientLight( 0xfffffff );
+    this.light = new THREE.AmbientLight( 0xffffff );
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
@@ -154,13 +154,13 @@ export default class Sketch {
     let size;
     switch (numberGen) {
       case 0 :
-        size = 0.5;
+        size = 0.25;
         break;
       case 1 :
-        size = 0.75;
+        size = 0.5;
         break;
       case 2 :
-        size = 1;
+        size = 0.75;
         break;
     }
 
@@ -228,19 +228,10 @@ export default class Sketch {
 
   }
 
-  mouseClick() {
-    let that = this;
-    window.addEventListener('click', () => {
-      let size = that.setSizeForBlock();
-      let color = that.setColorForBlock();
-      that.createBody(size,color);
-    },false);
-  }
-
   onLoad() {
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 20;
+      const items = 50;
       let i = 0;
       const loop = () => {
         setTimeout(() => {
@@ -252,7 +243,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 250);
+        }, 200);
       };
      loop();
     });
@@ -426,39 +417,31 @@ export default class Sketch {
    createBody(size,color,position) {
     let month = this.date.getMonth();
     let o = {};
-    let body = this.world.add({
-      type:'cylinder', // type of shape : sphere, box, cylinder
-      size:[size,size,size], // size of shape
-      pos:[position.x, position.y, position.z], // start position in degree
-      rot:[0,0,90], // start rotation in degree
-      move:true, // dynamic or statique
-      density: 1,
-      friction: 0.2,
-      noSleep:true,
-      restitution: 0.2,
-      belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-      collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-      });
+    this.model = this.setModelForHoliday();
+    let mesh;
 
-      this.model = this.setModelForHoliday();
-      let mesh;
+    if (month === 2 || month === 11) {
+      setTimeout(() => {
 
-        setTimeout(() => {
+        let body = this.world.add({
+          type: this.model.collisionBox, // type of shape : sphere, box, cylinder
+          size:[size/1.5,size/1.5,size/1.5], // size of shape
+          pos:[position.x, position.y, position.z], // start position in degree
+          rot:[0,0,90], // start rotation in degree
+          move:true, // dynamic or statique
+          density: 1,
+          friction: 0.2,
+          noSleep:true,
+          restitution: 0.2,
+          belongsTo: 1, // The bits of the collision groups to which the shape belongs.
+          collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
+          });
 
-
-          if (month === 2 || month === 11 ) {
-          mesh = this.model.test;
-          mesh.scale.set(size/1.5,size/1.5,size/1.5);
-        } else {
-          mesh = new THREE.Mesh(
-            this.dateCheckerForModels(size),
-            new THREE.MeshLambertMaterial({color:color})
-          );
-        }
+        mesh = this.model.object;
+        mesh.scale.set(size/1.5,size/1.5,size/1.5);
 
         mesh.position.set(position.x, position.y, position.z);
         console.log(mesh.position.x)
-
 
         o.body = body;
         o.mesh = mesh;
@@ -466,7 +449,36 @@ export default class Sketch {
         this.scene.add(mesh);
         this.bodies.push(o)
 
-        }, 10)
+      }, 10)
+    } else {
+
+      let body = this.world.add({
+        type:'cylinder', // type of shape : sphere, box, cylinder
+        size:[size,size,size], // size of shape
+        pos:[position.x, position.y, position.z], // start position in degree
+        rot:[0,0,90], // start rotation in degree
+        move:true, // dynamic or statique
+        density: 1,
+        friction: 0.2,
+        noSleep:true,
+        restitution: 0.2,
+        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
+        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
+        });
+
+      mesh = new THREE.Mesh(
+        this.dateCheckerForModels(size),
+        new THREE.MeshLambertMaterial({color:color})
+      );
+
+      mesh.position.set(position.x, position.y, position.z);
+
+      o.body = body;
+      o.mesh = mesh;
+
+      this.scene.add(mesh);
+      this.bodies.push(o);
+    }
   }
 
   render() {

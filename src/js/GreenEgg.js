@@ -4,7 +4,8 @@ import GLTFLoader from 'three-gltf-loader';
 
 export default class GreenModel{
   constructor(){
-    this.test;
+    this.object;
+    this.collisionBox = 'sphere';
     this.costumModelLoader();
   }
 
@@ -24,7 +25,7 @@ export default class GreenModel{
 
     const loader = new GLTFLoader();
     loader.load(model, gltf => {
-     return this.test = gltf.scene.getObjectByName('Sphere');
+     return this.object = gltf.scene.getObjectByName('Sphere');
   })
 }
 }

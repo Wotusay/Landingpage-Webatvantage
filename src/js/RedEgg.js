@@ -4,8 +4,9 @@ import GLTFLoader from 'three-gltf-loader';
 
 export default class RedModel{
   constructor(){
-    this.test;
+    this.object;
     this.costumModelLoader();
+    this.collisionBox = 'sphere';
   }
 
   costumModelLoader() {
@@ -24,7 +25,7 @@ export default class RedModel{
 
     const loader = new GLTFLoader();
     loader.load(model, gltf => {
-     return this.test = gltf.scene.getObjectByName('Sphere');
+     return this.object = gltf.scene.getObjectByName('Sphere');
   })
 }
 }
