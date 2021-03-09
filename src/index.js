@@ -3,9 +3,12 @@ import { fragmentShader } from './shaders/fragment.js';
 import { vertexShader } from './shaders/vertex.js';
 import * as dat from 'dat.gui';
 import './style.css';
+
 import BlueModel from './js/blue';
 import RedModel from './js/red';
 import GreenModel from './js/green';
+import BunnyModel from './js/bunny';
+
 
 import * as OIMO from 'oimo';
 
@@ -83,19 +86,19 @@ export default class Sketch {
 
   setModelForHoliday() {
     let numberGen = Math.floor(Math.random() * 3);
-    let color;
+    let model;
     switch (numberGen) {
       case 0 :
-        color = new BlueModel();
+        model = new BlueModel();
         break;
       case 1 :
-        color = new GreenModel() ;
+        model = new BunnyModel() ;
         break;
       case 2 :
-        color = new RedModel();
+        model = new RedModel();
         break;
     }
-    return color;
+    return model;
   }
 
   setColorForBlock() {
@@ -424,7 +427,7 @@ export default class Sketch {
     let month = this.date.getMonth();
     let o = {};
     let body = this.world.add({
-      type:'box', // type of shape : sphere, box, cylinder
+      type:'cylinder', // type of shape : sphere, box, cylinder
       size:[size,size,size], // size of shape
       pos:[position.x, position.y, position.z], // start position in degree
       rot:[0,0,90], // start rotation in degree
@@ -441,6 +444,8 @@ export default class Sketch {
       let mesh;
 
         setTimeout(() => {
+
+
           if (month === 2 || month === 11 ) {
           mesh = this.model.test;
           mesh.scale.set(size/1.5,size/1.5,size/1.5);

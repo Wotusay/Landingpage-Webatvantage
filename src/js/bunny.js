@@ -1,8 +1,8 @@
 import RedEgg from '../assets/models/redegg.glb';
-import KerstRed from '../assets/models/kerstred.glb';
+import Bunny from '../assets/models/Bunny.glb';
 import GLTFLoader from 'three-gltf-loader';
 
-export default class RedModel{
+export default class BunnyModel{
   constructor(){
     this.test;
     this.costumModelLoader();
@@ -19,12 +19,14 @@ export default class RedModel{
     }
 
     if (month === 2) {
-      model = RedEgg;
+      model = Bunny;
     }
 
     const loader = new GLTFLoader();
     loader.load(model, gltf => {
-     return this.test = gltf.scene.getObjectByName('Sphere');
+
+      console.log(gltf.scene);
+     return this.test = gltf.scene;
   })
 }
 }
