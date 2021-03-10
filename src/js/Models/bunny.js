@@ -1,5 +1,4 @@
-import RedEgg from '../assets/models/redegg.glb';
-import Bunny from '../assets/models/Bunny.glb';
+import Bunny from '../../assets/models/bunny.glb';
 import GLTFLoader from 'three-gltf-loader';
 
 export default class BunnyModel{

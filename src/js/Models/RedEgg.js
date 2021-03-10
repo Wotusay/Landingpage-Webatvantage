@@ -1,11 +1,11 @@
-import BlueEgg from '../assets/models/blueegg.glb';
-import BlueKerst from '../assets/models/kerstblue.glb';
+import RedEgg from '../../assets/models/redegg.glb';
+import KerstRed from '../../assets/models/kerstred.glb';
 import GLTFLoader from 'three-gltf-loader';
 
-export default class BlueModel{
+export default class RedModel{
   constructor(){
-    this.object;
     this.collisionBox = 'sphere';
+    this.object;
     this.costumModelLoader();
   }
 
@@ -16,11 +16,11 @@ export default class BlueModel{
     let model;
 
     if (month === 11) {
-      model = BlueKerst;
+      model = KerstRed;
     }
 
     if (month === 2) {
-      model = BlueEgg;
+      model = RedEgg;
     }
 
     const loader = new GLTFLoader();

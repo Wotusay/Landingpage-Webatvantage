@@ -1,13 +1,12 @@
 import * as THREE from 'three';
-import { fragmentShader } from './shaders/fragment.js';
-import { vertexShader } from './shaders/vertex.js';
-import * as dat from 'dat.gui';
 import './style.css';
 
-import BlueModel from './js/BlueEgg';
-import RedModel from './js/RedEgg';
-import GreenModel from './js/GreenEgg';
-import BunnyModel from './js/bunny';
+import BlueModel from './js/Models/BlueEgg';
+import RedModel from './js/Models/RedEgg';
+import GreenModel from './js/Models/GreenEgg';
+import BunnyModel from './js/Models/bunny';
+import EggModel from './js/Models/Egg';
+import ChickenModel from './js/Models/chicken';
 
 
 import * as OIMO from 'oimo';
@@ -45,47 +44,18 @@ export default class Sketch {
     this.time = 0;
     this.mouseMove();
     this.onLoad();
-    //this.mouseClick();
     this.render();
-    //this.settings();
-
     this.resize();
   }
 
-  dateCheckerForModels(size) {
-    let month = this.date.getMonth();
-    let model;
-    switch (month) {
-      case 11 :
-      case 0 :
-      case 1 :
-        model = new THREE.SphereBufferGeometry(size / 1.5);
-        break;
-      case 2 :
-      case 3 :
-      case 4 :
-        model = new THREE.BoxBufferGeometry(size,size,size);
-        break;
-      case 5 :
-      case 6 :
-      case 7 :
-        model = new THREE.CylinderBufferGeometry(0,size/2,size/2);
-        break;
-      case 8 :
-      case 9 :
-      case 10 :
-        model = new THREE.TetrahedronBufferGeometry(size/1.5);
-        break;
-      default:
-        model = new THREE.BoxBufferGeometry(size,size,size);
-    }
-
-    return model;
-  }
-
+  // Deze functies dienen voor de model of cube te laten randomizen
 
   setModelForHoliday() {
-    let numberGen = Math.floor(Math.random() * 3);
+    // Hier komen dan alle models in te recht
+    // Als je meer dan 5 wilt moet je altijd het getaltje +1 maken.
+    // In dit geval is dit nu 6  dus wil ik 5 models
+    const number = 6;
+    let numberGen = Math.floor(Math.random() * number);
     let model;
     switch (numberGen) {
       case 0 :
@@ -97,12 +67,23 @@ export default class Sketch {
       case 2 :
         model = new RedModel();
         break;
+      case 3 :
+        model = new GreenModel();
+        break;
+      case 4 :
+        model = new EggModel();
+        break;
+      case 5 :
+        model = new ChickenModel();
+        break;
     }
     return model;
   }
 
   setColorForBlock() {
-    let numberGen = Math.floor(Math.random() * 3);
+    // Dit is er voor als er geen models zijn of geen feest is in deze maand
+    const number = 3
+    let numberGen = Math.floor(Math.random() * number);
     let color;
     switch (numberGen) {
       case 0 :
@@ -120,7 +101,9 @@ export default class Sketch {
   }
 
   setPositionForBlock() {
-    let numberGen = Math.floor(Math.random() * 7);
+        // Hier komen dan alle posities van de objecten terechtn
+    const number = 7;
+    let numberGen = Math.floor(Math.random() * number);
     let position;
     switch (numberGen) {
       case 0 :
@@ -150,17 +133,20 @@ export default class Sketch {
   }
 
   setSizeForBlock() {
-    let numberGen = Math.floor(Math.random() * 3);
+    // Hier komen dan alle sizes voor de elementen
+    const number = 3;
+    const sizes = { s:0.25, m:0.5, b:0.75}
+    let numberGen = Math.floor(Math.random() * number);
     let size;
     switch (numberGen) {
       case 0 :
-        size = 0.25;
+        size = sizes.s;
         break;
       case 1 :
-        size = 0.5;
+        size = sizes.m;
         break;
       case 2 :
-        size = 0.75;
+        size = sizes.b;
         break;
     }
 
@@ -168,9 +154,12 @@ export default class Sketch {
   }
 
   fontMaker() {
+    // Hier worden de fonts ingeladen
+    // Alle fonts werken niett met pixels maar met meter
+    // Dus pas op als je iets aan past
     // Regular
     this.loader.load(fontPathTwo, (font) => {
-      let geometry = new THREE.TextGeometry( 'online expierences', {
+      let geometry = new THREE.TextGeometry( 'online experiences', {
         font: font,
         size: 0.5,
         height: 0.04,
@@ -179,7 +168,7 @@ export default class Sketch {
 
      this.fontbodyReg = this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
-        size:[5.5,0.45,0.1], // size of shape
+        size:[5.5,1,0.1], // size of shape
         pos:[0,0,0], // start position in degree
         rot:[0,0,0], // start rotation in degree
         move:false, // dynamic or statique
@@ -194,7 +183,7 @@ export default class Sketch {
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-2.65,-0.2,0);
+      this.fontBold.position.set(-3.3,-0.2,0);
       this.scene.add(this.fontBold);
     });
 
@@ -229,6 +218,8 @@ export default class Sketch {
   }
 
   onLoad() {
+    // Hier worden dan alle 3d elmenen op geroept.
+    // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
       const items = 50;
@@ -250,10 +241,16 @@ export default class Sketch {
   }
 
   mouseMove() {
+    // Hier wordt er gechecked voor een eem mouse  / touch bewegging
+    // Dit werkt met een 3D plane
+    // Alles die op die 3d plane valt zal een bewegiing krijgen
+
     let that = this;
     this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
     // Desktop
     window.addEventListener('mousemove',(event) => {
+
+
       that.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       that.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -263,7 +260,6 @@ export default class Sketch {
 
       if (intersects.length > 0) {
         that.point = intersects[0].point;
-        console.log(that.point);
       }
 
     }, false);
@@ -292,22 +288,9 @@ export default class Sketch {
     window.addEventListener('resize', this.resize.bind(this))
   }
 
-  settings(){
-    let that = this;
-    this.settings = {
-      time: 0,
-      createBody: () => {
-        that.createBody();
-      }
-    };
-
-    this.gui = new dat.GUI();
-    this.gui.add(this.settings, "time", 0,100,0.01);
-    this.gui.add(this.settings, "createBody");
-
-  }
-
   resize() {
+    // Hier kijken we voor het element te kunnen resizen
+    // Alles wordt dan ook hier geresized
     this.width = this.container.offsetWidth;
     this.height = this.container.offsetHeight;
     this.renderer.setSize(this.width, this.height);
@@ -327,6 +310,7 @@ export default class Sketch {
 
 
   resizeElements(width) {
+    // Resize chekker
     if (width >= 320 && width <= 420 ) {
       this.fontLight.scale.set(0.5,0.5,0.5);
       this.fontLight.position.set(-0.75,0.35,0);
@@ -348,35 +332,28 @@ export default class Sketch {
       this.fontBold.position.set(-2.4,0,0);
     }
 
-    if (width >= 768) {
+   else {
       this.fontLight.scale.set(1,1,1);
-      this.fontLight.position.set(-1.5,0.65,0);
+      this.fontLight.position.set(-1.8,0.65,0);
       this.fontBold.scale.set(1,1,1);
-      this.fontBold.position.set(-2.65,-0.2,0);
+      this.fontBold.position.set(-3,-0.2,0);
     }
 
   }
 
   addMesh() {
+    // Dit is de mouse object
+    // Hier mee kan je de elementen mee bewgenen
+    // Dit volgt de volgt constant je muis maar is niet gerenderd
     this.geometry = new THREE.PlaneBufferGeometry(1,1);
     this.geometry = new THREE.OctahedronBufferGeometry(1)
-    this.material1 = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
-    this.material = new THREE.ShaderMaterial({
-      fragmentShader: fragmentShader,
-      vertexShader: vertexShader,
-      uniforms: {
-        time: {type:'f', value:0},
-        resolution:{type: "v4", value: new THREE.Vector4()} ,
-        uvRate1: {
-          value: new THREE.Vector2(1,1)
-        }
-      },
-      side: THREE.DoubleSide
-    });
-    this.Object = new THREE.Mesh( this.geometry, this.material1 );
+    this.material = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
+    this.Object = new THREE.Mesh( this.geometry, this.material );
   }
 
   physics() {
+    // Hier worden alle physcics ingesteld
+    // Alles komt dan ook hierr terecht bv de walls / de wereld en de gravity
     this.bodies = [];
 
     this.world = new OIMO.World({
@@ -415,14 +392,16 @@ export default class Sketch {
   }
 
    createBody(size,color,position) {
+     // Hier maken we een oobject aan die ingespawnt wordt waneer de pagina in laad
+
     let month = this.date.getMonth();
     let o = {};
     this.model = this.setModelForHoliday();
     let mesh;
 
     if (month === 2 || month === 11) {
+      // Dit deel is voor de costum models
       setTimeout(() => {
-
         let body = this.world.add({
           type: this.model.collisionBox, // type of shape : sphere, box, cylinder
           size:[size/1.5,size/1.5,size/1.5], // size of shape
@@ -441,7 +420,6 @@ export default class Sketch {
         mesh.scale.set(size/1.5,size/1.5,size/1.5);
 
         mesh.position.set(position.x, position.y, position.z);
-        console.log(mesh.position.x)
 
         o.body = body;
         o.mesh = mesh;
@@ -451,7 +429,7 @@ export default class Sketch {
 
       }, 10)
     } else {
-
+      // dit is de default value
       let body = this.world.add({
         type:'cylinder', // type of shape : sphere, box, cylinder
         size:[size,size,size], // size of shape
@@ -467,7 +445,7 @@ export default class Sketch {
         });
 
       mesh = new THREE.Mesh(
-        this.dateCheckerForModels(size),
+        new THREE.BoxBufferGeometry(size,size,size),
         new THREE.MeshLambertMaterial({color:color})
       );
 
@@ -482,6 +460,7 @@ export default class Sketch {
   }
 
   render() {
+    // Hier wordt dan alles gerenderd en opniew gespeeld 
     this.time++;
     this.world.step();
     this.body.awake();

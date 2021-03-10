@@ -1,11 +1,10 @@
-import GreenEgg from '../assets/models/greenegg.glb';
-import KerstGreen from '../assets/models/kerstgreen.glb';
+import Chikken from '../../assets/models/chikken.glb';
 import GLTFLoader from 'three-gltf-loader';
 
-export default class GreenModel{
+export default class ChickenModel{
   constructor(){
+    this.collisionBox = 'cylinder';
     this.object;
-    this.collisionBox = 'sphere';
     this.costumModelLoader();
   }
 
@@ -16,16 +15,18 @@ export default class GreenModel{
     let model;
 
     if (month === 11) {
-      model = KerstGreen ;
+      model = KerstRed;
     }
 
     if (month === 2) {
-      model = GreenEgg;
+      model = Chikken;
     }
 
     const loader = new GLTFLoader();
     loader.load(model, gltf => {
-     return this.object = gltf.scene.getObjectByName('Sphere');
+
+      console.log(gltf.scene);
+     return this.object = gltf.scene;
   })
 }
 }
