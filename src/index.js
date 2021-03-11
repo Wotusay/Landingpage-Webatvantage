@@ -1,18 +1,22 @@
 import * as THREE from 'three';
 import './style.css';
+import GLTFLoader from 'three-gltf-loader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import Model from './js/Models/model';
 
-import Chikken from './assets/models/chikken.glb';
-import BlueEgg from './assets/models/blueegg.glb';
-import Bunny from './assets/models/bunny.glb';
-import Egg from './assets/models/egg.glb';
-import RedEgg from './assets/models/redegg.glb';
-import GreenEgg from './assets/models/greenegg.glb';
+import Chikken from './assets/chikken.gltf';
+import BlueEgg from './assets/blueegg.gltf';
+import Bunny from './assets/bunny.gltf';
+import Egg from './assets/egg.gltf';
+import RedEgg from './assets/redegg.gltf';
+import GreenEgg from './assets/greenegg.gltf';
+
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 
 import * as OIMO from 'oimo';
+
 
 export default class Sketch {
   constructor(date) {
@@ -34,6 +38,11 @@ export default class Sketch {
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
     this.fontLight;
+
+    this.sceneloader = new GLTFLoader();
+    this.dracoLoader = new DRACOLoader();
+    this.dracoLoader.setDecoderPath('./js/Loaders/gltf/');
+    this.sceneloader.setDRACOLoader(this.dracoLoader)
 
     this.scene.add(this.light);
 
@@ -386,9 +395,10 @@ export default class Sketch {
    createBody(size,color,position) {
      // Hier maken we een oobject aan die ingespawnt wordt waneer de pagina in laad
 
+
     let month = this.date.getMonth();
     let o = {};
-    this.model = new Model(this.setModelForHoliday());
+    this.model = new Model(this.setModelForHoliday(), this.sceneloader);
     let mesh;
 
     if (month === 2 || month === 11) {
@@ -409,6 +419,7 @@ export default class Sketch {
           });
 
         mesh = this.model.object;
+        console.log(mesh)
         mesh.scale.set(size/1.5,size/1.5,size/1.5);
 
         mesh.position.set(position.x, position.y, position.z);
@@ -419,7 +430,7 @@ export default class Sketch {
         this.scene.add(mesh);
         this.bodies.push(o)
 
-      }, 10)
+      }, 30)
     } else {
       // dit is de default value
       let body = this.world.add({
