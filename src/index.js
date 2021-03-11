@@ -2,18 +2,19 @@ import * as THREE from 'three';
 import './style.css';
 import GLTFLoader from 'three-gltf-loader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-
+// Load in model
 import Model from './js/Models/model';
-
+// Models
 import Chikken from './assets/chikken.gltf';
 import BlueEgg from './assets/blueegg.gltf';
 import Bunny from './assets/bunny.gltf';
 import Egg from './assets/egg.gltf';
 import RedEgg from './assets/redegg.gltf';
 import GreenEgg from './assets/greenegg.gltf';
-
+// Fonts
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
+// Physics
 import * as OIMO from 'oimo';
 
 
@@ -38,6 +39,8 @@ export default class Sketch {
     this.loader = new THREE.FontLoader();
     this.fontLight;
 
+    // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
+    // De links is de decoder zelf om deze dan te gebruiken ook in production
     this.sceneloader = new GLTFLoader();
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderConfig({type: 'js'})
@@ -403,8 +406,6 @@ export default class Sketch {
 
    createBody(size,color,position) {
      // Hier maken we een oobject aan die ingespawnt wordt waneer de pagina in laad
-
-
     let month = this.date.getMonth();
     let o = {};
     const itemPicker = this.setModelForHoliday();
