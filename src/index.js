@@ -430,7 +430,7 @@ export default class Sketch {
         this.scene.add(mesh);
         this.bodies.push(o)
 
-      }, 30)
+      }, 200)
     } else {
       // dit is de default value
       let body = this.world.add({
