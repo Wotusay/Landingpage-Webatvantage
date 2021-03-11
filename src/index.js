@@ -211,7 +211,7 @@ export default class Sketch {
         density: 1,
         friction: 0.2,
         noSleep:true,
-        restitution: 1,
+        restitution: 0.2,
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
@@ -241,7 +241,7 @@ export default class Sketch {
         density: 1,
         friction: 0.2,
         noSleep:true,
-        restitution: 1,
+        restitution: 0.2,
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
@@ -403,17 +403,17 @@ export default class Sketch {
       density: 0.5,
       noSleep: true,
       friction: 0.2,
-      restitution: 1,
+      restitution: 0.5,
       belongsTo: 1, // The bits of the collision groups to which the shape belongs.
       collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
       });
 
       //Floors
-    this.groundBottom = this.world.add({restitution: 0.5,size:[40,1,40], pos: [0,-4.5,0]});
-    this.groundTop = this.world.add({restitution: 0.5, size:[40,1,40], pos: [0,8.5,0]});
+    this.groundBottom = this.world.add({restitution: 0.2,size:[40,1,40], pos: [0,-4.5,0]});
+    this.groundTop = this.world.add({restitution: 0.2, size:[40,1,40], pos: [0,8.5,0]});
 
-    this.groundLeft = this.world.add({restitution: 0.5, size:[1,40,40], pos: [-7,0,0]  });
-    this.groundRight = this.world.add({restitution: 0.5, size:[1,40,40], pos: [7,0,0]});
+    this.groundLeft = this.world.add({restitution: 0.2, size:[1,40,40], pos: [-7,0,0]  });
+    this.groundRight = this.world.add({restitution: 0.2, size:[1,40,40], pos: [7,0,0]});
 
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
     this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
