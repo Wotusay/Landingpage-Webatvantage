@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import './style.css';
 import GLTFLoader from 'three-gltf-loader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader';
 
 // Load in modelx
 import Model from './js/Models/model';
