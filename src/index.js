@@ -14,7 +14,6 @@ import GreenEgg from './assets/greenegg.gltf';
 
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
-
 import * as OIMO from 'oimo';
 
 
@@ -41,7 +40,8 @@ export default class Sketch {
 
     this.sceneloader = new GLTFLoader();
     this.dracoLoader = new DRACOLoader();
-    this.dracoLoader.setDecoderPath('./js/Loaders/gltf/');
+    this.dracoLoader.setDecoderConfig({type: 'js'})
+    this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     this.sceneloader.setDRACOLoader(this.dracoLoader)
 
     this.scene.add(this.light);
