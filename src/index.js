@@ -419,17 +419,19 @@ export default class Sketch {
           });
 
         mesh = this.model.object;
-        if (mesh.scale !== undefined) {
+        if (this.model.object.scale !== undefined) {
           mesh.scale.set(size/1.5,size/1.5,size/1.5);
+          mesh.position.set(position.x, position.y, position.z);
+
+          o.body = body;
+          o.mesh = mesh;
+
+          this.scene.add(mesh);
+          this.bodies.push(o)
         }
-
-        mesh.position.set(position.x, position.y, position.z);
-
-        o.body = body;
-        o.mesh = mesh;
-
-        this.scene.add(mesh);
-        this.bodies.push(o)
+        else {
+          return;
+        }
 
       }, 200)
     } else {
