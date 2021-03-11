@@ -1,6 +1,5 @@
 import GLTFLoader from 'three-gltf-loader';
 import BlueEgg from '../../assets/models/blueegg.glb';
-import BlueKerst from '../../assets/models/kerstblue.glb';
 
 export default class BlueModel{
   constructor(){

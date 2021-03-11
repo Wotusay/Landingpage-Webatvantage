@@ -1,18 +1,18 @@
 import * as THREE from 'three';
 import './style.css';
 
-import BlueModel from './js/Models/BlueEgg';
-import RedModel from './js/Models/RedEgg';
-import GreenModel from './js/Models/GreenEgg';
-import BunnyModel from './js/Models/bunny';
-import EggModel from './js/Models/Egg';
-import ChickenModel from './js/Models/chicken';
+import Model from './js/Models/model';
 
+import Chikken from './assets/models/chikken.glb';
+import BlueEgg from './assets/models/blueegg.glb';
+import Bunny from './assets/models/bunny.glb';
+import Egg from './assets/models/egg.glb';
+import RedEgg from './assets/models/redegg.glb';
+import GreenEgg from './assets/models/greenegg.glb';
+import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
+import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 
 import * as OIMO from 'oimo';
-
-const fontPathOne = require('./assets/fonts/HalyardDisplay-ExtraLight.json');
-const fontPathTwo = require('./assets/fonts/HalyardDisplay-Regular.json');
 
 export default class Sketch {
   constructor(date) {
@@ -59,22 +59,22 @@ export default class Sketch {
     let model;
     switch (numberGen) {
       case 0 :
-        model = new BlueModel();
+        model = Chikken;
         break;
       case 1 :
-        model = new BunnyModel() ;
+        model = Bunny ;
         break;
       case 2 :
-        model = new RedModel();
+        model = Egg;
         break;
       case 3 :
-        model = new GreenModel();
+        model = RedEgg;
         break;
       case 4 :
-        model = new EggModel();
+        model = BlueEgg;
         break;
       case 5 :
-        model = new ChickenModel();
+        model = GreenEgg;
         break;
     }
     return model;
@@ -388,7 +388,7 @@ export default class Sketch {
 
     let month = this.date.getMonth();
     let o = {};
-    this.model = this.setModelForHoliday();
+    this.model = new Model(this.setModelForHoliday());
     let mesh;
 
     if (month === 2 || month === 11) {
