@@ -337,7 +337,7 @@ export default class Sketch {
     // Dit is de mouse object
     // Hier mee kan je de elementen mee bewgenen
     // Dit volgt de volgt constant je muis maar is niet gerenderd
-    this.geometry = new THREE.PlaneBufferGeometry(1,1);
+    this.geometry = new THREE.BoxBufferGeometry(1);
     this.geometry = new THREE.OctahedronBufferGeometry(1)
     this.material = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
     this.Object = new THREE.Mesh( this.geometry, this.material );
@@ -360,11 +360,11 @@ export default class Sketch {
 
     this.body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
-      size:[1,1,1], // size of shape
+      size:[1,1,2], // size of shape
       pos:[0,0,0], // start position in degree
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
-      density: 1,
+      density: 0.5,
       noSleep: true,
       friction: 0.2,
       restitution: 1,
@@ -373,11 +373,11 @@ export default class Sketch {
       });
 
       //Floors
-    this.groundBottom = this.world.add({restitution: 1,size:[40,1,40], pos: [0,-4.5,0]});
-    this.groundTop = this.world.add({restitution: 1, size:[40,1,40], pos: [0,8.5,0]});
+    this.groundBottom = this.world.add({restitution: 0.5,size:[40,1,40], pos: [0,-4.5,0]});
+    this.groundTop = this.world.add({restitution: 0.5, size:[40,1,40], pos: [0,8.5,0]});
 
-    this.groundLeft = this.world.add({restitution: 1, size:[1,40,40], pos: [-7,0,0]  });
-    this.groundRight = this.world.add({restitution: 1, size:[1,40,40], pos: [7,0,0]});
+    this.groundLeft = this.world.add({restitution: 0.5, size:[1,40,40], pos: [-7,0,0]  });
+    this.groundRight = this.world.add({restitution: 0.5, size:[1,40,40], pos: [7,0,0]});
 
     this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
     this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
