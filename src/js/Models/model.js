@@ -8,15 +8,8 @@ export default class Model{
   }
 
   costumModelLoader() {
-    let o ;
     // Hier wordt de function voor de load gebeurd
     this.loader.load(this.model, gltf => {
-      o = gltf.scene;
-      o.traverse(n => {
-        if(n.isMesh) {
-          n.recieveShadow = true;
-        }
-      })
      return this.object = gltf.scene;
   })
 }

@@ -23,7 +23,6 @@ export default class Sketch {
     this.date = date;
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
-
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.shadowMap.enabled = true;
@@ -37,10 +36,7 @@ export default class Sketch {
     this.spotLight = new THREE.SpotLight(0xffa95c,1.3);
     this.spotLighttwo = new THREE.SpotLight(0xffa95c,1.6);
     this.spotLight.position.set(-10,0,10);
-    this.spotLighttwo.position.set(-10,0,-10);
     this.hemiLight.position.set(5,0,5);
-    this.spotLight.castShadow = true;
-
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
     this.scene = new THREE.Scene();
@@ -458,7 +454,7 @@ export default class Sketch {
           return;
         }
 
-      }, 200)
+      }, 100)
     } else {
       // dit is de default value
       let body = this.world.add({
