@@ -15,8 +15,6 @@ import GreenEgg from './assets/greenegg.gltf';
 // Fonts
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
-
-import envMap from './assets/images/envMap.hdr'
 // Physics
 import * as OIMO from 'oimo';
 
