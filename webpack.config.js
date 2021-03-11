@@ -44,7 +44,7 @@ module.exports = (env, {mode}) => {
           ]
         },
         {
-          test: /\.(jpe?g|png|svg|webp|hdr|exr)$/,
+          test: /\.(jpe?g|png|svg|webp)$/,
           use: {
             loader: 'url-loader',
             options: {
