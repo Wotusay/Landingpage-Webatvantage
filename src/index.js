@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import './style.css';
 import GLTFLoader from 'three-gltf-loader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-// Load in model
+import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader';
+
+// Load in modelx
 import Model from './js/Models/model';
 // Models
 import Chikken from './assets/chikken.gltf';
@@ -14,8 +16,12 @@ import GreenEgg from './assets/greenegg.gltf';
 // Fonts
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
+
+import envMap from './assets/images/envMap.hdr'
 // Physics
 import * as OIMO from 'oimo';
+
+
 
 
 export default class Sketch {
@@ -24,13 +30,22 @@ export default class Sketch {
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.shadowMap.enabled = true;
     this.container = document.getElementById('container');
     this.container.appendChild( this.renderer.domElement );
     this.width =  this.container.offsetWidth;
     this.height = this.container.offsetHeight;
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
-    this.light = new THREE.AmbientLight( 0xffffff );
+    this.hemiLight = new THREE.HemisphereLight(0xffeeb1, 0x080820,0.6);
+    this.spotLight = new THREE.SpotLight(0xffa95c,1.3);
+    this.spotLighttwo = new THREE.SpotLight(0xffa95c,1.6);
+    this.spotLight.position.set(-10,0,10);
+    this.spotLighttwo.position.set(-10,0,-10);
+    this.hemiLight.position.set(5,0,5);
+    this.spotLight.castShadow = true;
 
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
@@ -38,6 +53,7 @@ export default class Sketch {
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
     this.fontLight;
+    this.hdrCubeMap;
 
     // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
     // De links is de decoder zelf om deze dan te gebruiken ook in production
@@ -47,7 +63,10 @@ export default class Sketch {
     this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     this.sceneloader.setDRACOLoader(this.dracoLoader)
 
-    this.scene.add(this.light);
+    this.scene.add(this.hemiLight);
+    this.scene.add(this.spotLight);
+    this.scene.add(this.spotLighttwo);
+
 
     this.setupResize();
     this.fontMaker();
@@ -59,6 +78,9 @@ export default class Sketch {
     this.render();
     this.resize();
   }
+
+
+
 
   // Deze functies dienen voor de model of cube te laten randomizen
 
@@ -78,7 +100,6 @@ export default class Sketch {
       case 1 :
         o.model = Bunny ;
         o.collisionBox = 'cylinder';
-
         break;
       case 2 :
         o.model = Egg;
@@ -156,7 +177,7 @@ export default class Sketch {
   setSizeForBlock() {
     // Hier komen dan alle sizes voor de elementen
     const number = 3;
-    const sizes = { s:0.25, m:0.5, b:0.75}
+    const sizes = { s:0.15, m:0.25, b:0.5}
     let numberGen = Math.floor(Math.random() * number);
     let size;
     switch (numberGen) {
@@ -243,7 +264,7 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 50;
+      const items = 100;
       let i = 0;
       const loop = () => {
         setTimeout(() => {
@@ -255,7 +276,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 200);
+        }, 100);
       };
      loop();
     });
