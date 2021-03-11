@@ -458,7 +458,7 @@ export default class Sketch {
           return;
         }
 
-      }, 200)
+      }, 300)
     } else {
       // dit is de default value
       let body = this.world.add({
