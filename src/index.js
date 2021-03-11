@@ -162,7 +162,7 @@ export default class Sketch {
       let geometry = new THREE.TextGeometry( 'online experiences', {
         font: font,
         size: 0.5,
-        height: 0.04,
+        height: 0.01,
 
       } );
 
@@ -183,7 +183,7 @@ export default class Sketch {
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-3.3,-0.2,0);
+      this.fontBold.position.set(-2.7,-0.2,0);
       this.scene.add(this.fontBold);
     });
 
@@ -193,7 +193,7 @@ export default class Sketch {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
-        height: 0.04,
+        height: 0.01,
       });
 
       this.fontbodyLight =  this.world.add({
@@ -211,7 +211,7 @@ export default class Sketch {
         });
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x14161D}));
-      this.fontLight.position.set(-1.5,0.65,0);
+      this.fontLight.position.set(-1.55,0.65,0);
       this.scene.add(this.fontLight);
     });
 
@@ -311,32 +311,24 @@ export default class Sketch {
 
   resizeElements(width) {
     // Resize chekker
-    if (width >= 320 && width <= 420 ) {
-      this.fontLight.scale.set(0.5,0.5,0.5);
-      this.fontLight.position.set(-0.75,0.35,0);
-      this.fontBold.scale.set(0.5,0.5,0.5);
-      this.fontBold.position.set(-1.35,0,0);
-    }
-
-    if (width >= 420 && width <= 520 ) {
-      this.fontLight.scale.set(0.7,0.7,0.7);
-      this.fontLight.position.set(-1,0.45,0);
-      this.fontBold.scale.set(0.7,0.7,0.7);
-      this.fontBold.position.set(-1.8,0,0);
-    }
-
-    if (width >= 520 && width <= 768) {
-      this.fontLight.scale.set(0.9,0.9,0.9);
-      this.fontLight.position.set(-1.35,0.75,0);
-      this.fontBold.scale.set(0.9,0.9,0.9);
-      this.fontBold.position.set(-2.4,0,0);
-    }
-
-   else {
-      this.fontLight.scale.set(1,1,1);
-      this.fontLight.position.set(-1.8,0.65,0);
-      this.fontBold.scale.set(1,1,1);
-      this.fontBold.position.set(-3,-0.2,0);
+    switch (true) {
+      case(width >= 375 && width <= 767):
+        this.fontLight.scale.set(0.65,0.65,0.65);
+        this.fontLight.position.set(-1,0.65,0);
+        this.fontBold.scale.set(0.65,0.65,0.65);
+        this.fontBold.position.set(-1.75,0.15,0);
+        break;
+      case(width >= 768 && width <= 1023):
+        this.fontLight.scale.set(0.83,0.83,0.83);
+        this.fontLight.position.set(-1.2,0.675,0);
+        this.fontBold.scale.set(0.83,0.83,0.83);
+        this.fontBold.position.set(-2.2,0,0);
+        break;
+      case(width >= 1024):
+        this.fontLight.scale.set(1,1,1);
+        this.fontLight.position.set(-1.55,0.65,0);
+        this.fontBold.scale.set(1,1,1);
+        this.fontBold.position.set(-2.7,-0.2,0);
     }
 
   }
@@ -460,7 +452,7 @@ export default class Sketch {
   }
 
   render() {
-    // Hier wordt dan alles gerenderd en opniew gespeeld 
+    // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
     this.world.step();
     this.body.awake();
