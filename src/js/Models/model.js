@@ -6,7 +6,6 @@ export default class Model{
     this.object;
     this.model = model;
     this.loader = loader;
-    this.collisionBox = 'cylinder';
     this.costumModelLoader();
   }
 

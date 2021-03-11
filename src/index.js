@@ -65,28 +65,37 @@ export default class Sketch {
     // In dit geval is dit nu 6  dus wil ik 5 models
     const number = 6;
     let numberGen = Math.floor(Math.random() * number);
-    let model;
+
+    let o = {}
     switch (numberGen) {
       case 0 :
-        model = Chikken;
+        o.model = Chikken;
+        o.collisionBox = 'cylinder';
         break;
       case 1 :
-        model = Bunny ;
+        o.model = Bunny ;
+        o.collisionBox = 'cylinder';
+
         break;
       case 2 :
-        model = Egg;
+        o.model = Egg;
+        o.collisionBox = 'sphere';
         break;
       case 3 :
-        model = RedEgg;
+        o.model = RedEgg;
+        o.collisionBox = 'sphere';
         break;
       case 4 :
-        model = BlueEgg;
+        o.model = BlueEgg;
+        o.collisionBox = 'sphere';
         break;
       case 5 :
-        model = GreenEgg;
+        o.model = GreenEgg;
+        o.collisionBox = 'sphere';
         break;
     }
-    return model;
+
+    return o;
   }
 
   setColorForBlock() {
@@ -398,14 +407,14 @@ export default class Sketch {
 
     let month = this.date.getMonth();
     let o = {};
-    this.model = new Model(this.setModelForHoliday(), this.sceneloader);
+    const itemPicker = this.setModelForHoliday();
+    this.model = new Model(itemPicker.model, this.sceneloader);
     let mesh;
-
     if (month === 2 || month === 11) {
       // Dit deel is voor de costum models
       setTimeout(() => {
         let body = this.world.add({
-          type: this.model.collisionBox, // type of shape : sphere, box, cylinder
+          type: itemPicker.collisionBox, // type of shape : sphere, box, cylinder
           size:[size/1.5,size/1.5,size/1.5], // size of shape
           pos:[position.x, position.y, position.z], // start position in degree
           rot:[0,0,90], // start rotation in degree
