@@ -14,11 +14,7 @@ export default class Model{
       o = gltf.scene;
       o.traverse(n => {
         if(n.isMesh) {
-          n.castShadow = true;
           n.recieveShadow = true;
-          if (n.material.map) {
-            n.material.anisotropy =5;
-          }
         }
       })
      return this.object = gltf.scene;
