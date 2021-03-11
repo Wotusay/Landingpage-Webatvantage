@@ -18,9 +18,6 @@ import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
 import * as OIMO from 'oimo';
 
-
-
-
 export default class Sketch {
   constructor(date) {
     this.date = date;
