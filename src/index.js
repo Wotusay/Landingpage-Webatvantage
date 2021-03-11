@@ -177,14 +177,14 @@ export default class Sketch {
 
      this.fontbodyReg = this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
-        size:[5.5,1,0.1], // size of shape
+        size:[5.5,0.6,3], // size of shape
         pos:[0,0,0], // start position in degree
         rot:[0,0,0], // start rotation in degree
         move:false, // dynamic or statique
         density: 1,
         friction: 0.2,
         noSleep:true,
-        restitution: 4,
+        restitution: 1,
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
@@ -207,14 +207,14 @@ export default class Sketch {
 
       this.fontbodyLight =  this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
-        size:[3,0.9,0.3], // size of shape
+        size:[3,1,3], // size of shape
         pos:[0,0.65,0], // start position in degree
         rot:[0,0,0], // start rotation in degree
         move:false, // dynamic or statique
         density: 1,
         friction: 0.2,
         noSleep:true,
-        restitution: 4,
+        restitution: 1,
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
