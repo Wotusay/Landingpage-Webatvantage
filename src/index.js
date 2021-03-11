@@ -419,7 +419,9 @@ export default class Sketch {
           });
 
         mesh = this.model.object;
-        mesh.scale.set(size/1.5,size/1.5,size/1.5);
+        if (mesh.scale !== undefined) {
+          mesh.scale.set(size/1.5,size/1.5,size/1.5);
+        }
 
         mesh.position.set(position.x, position.y, position.z);
 
