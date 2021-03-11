@@ -419,7 +419,6 @@ export default class Sketch {
           });
 
         mesh = this.model.object;
-        console.log(mesh)
         mesh.scale.set(size/1.5,size/1.5,size/1.5);
 
         mesh.position.set(position.x, position.y, position.z);
