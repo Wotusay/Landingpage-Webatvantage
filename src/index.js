@@ -246,7 +246,7 @@ export default class Sketch {
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
 
-      this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x14161D}));
+      this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
       this.fontLight.position.set(-1.55,0.65,0);
       this.scene.add(this.fontLight);
     });
@@ -396,7 +396,7 @@ export default class Sketch {
 
     this.body = this.world.add({
       type:'box', // type of shape : sphere, box, cylinder
-      size:[1,1,2], // size of shape
+      size:[1,1,1.8], // size of shape
       pos:[0,0,0], // start position in degree
       rot:[0,0,90], // start rotation in degree
       move:true, // dynamic or statique
