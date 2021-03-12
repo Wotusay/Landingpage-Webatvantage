@@ -15,11 +15,14 @@ import GreenEgg from './assets/greenegg.gltf';
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
-import * as OIMO from 'oimo';
+import * as CANNON from 'cannon-es'
+//import * as OIMO from 'oimo';
 
 export default class Sketch {
   constructor(date) {
     this.date = date;
+    this.isDragging = false;
+
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -44,6 +47,13 @@ export default class Sketch {
     this.loader = new THREE.FontLoader();
     this.fontLight;
     this.hdrCubeMap;
+    this.jointBody;
+    this.world;
+    this.dt = 1 /60;
+    this.cubeBody = [];
+    this.meshes = [];
+    this.jointConstraint;
+
 
     // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
     // De links is de decoder zelf om deze dan te gebruiken ook in production
@@ -59,16 +69,196 @@ export default class Sketch {
 
     this.setupResize();
     this.fontMaker();
-    this.physics();
-    this.addMesh();
+    this.cannonJsPhysics();
+    this.onDrag();
+    //this.physics();
+    //this.addMesh();
     this.time = 0;
-    this.mouseMove();
+    //this.mouseMove();
     this.onLoad();
     this.render();
     this.resize();
   }
 
+  clickMaker() {
+    const markerGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8)
+    const markerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
+    this.clickMarker = new THREE.Mesh(markerGeometry, markerMaterial)
+    this.clickMarker.visible = false // Hide it..
+    this.scene.add(this.clickMarker)
+
+
+    this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshBasicMaterial());
+  }
   // Deze functies dienen voor de model of cube te laten randomizen
+  getHitPoint(clientX, clientY, mesh, camera) {
+    let that = this;
+    that.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+    that.mouse.y = - (clientY / window.innerHeight) * 2 + 1;
+    that.raycaster.setFromCamera(that.mouse, camera);
+    const hits = that.raycaster.intersectObject(mesh);
+    return hits.length > 0 ? hits[0].point : undefined;
+
+  }
+
+  showClickMarker() {
+    this.clickMarker.visible = true;
+  }
+
+  moveClickMarker(position) {
+    this.clickMarker.position.copy(position);
+  }
+
+  moveMovementPlane(point, camera) {
+    this.movementPlane.position.copy(point);
+    this.movementPlane.quaternion.copy(camera.quaternion);
+  }
+
+  addJointConstraint(position, constrainedBody) {
+    const vector = new CANNON.Vec3().copy(position).vsub(constrainedBody.position)
+
+    const antiRotation = constrainedBody.quaternion.inverse()
+    const pivot = antiRotation.vmult(vector)
+
+    this.jointBody.position.copy(position)
+
+    this.jointConstraint = new CANNON.PointToPointConstraint(constrainedBody, pivot, this.jointBody, new CANNON.Vec3(0, 0, 0))
+
+    this.world.addConstraint(this.jointConstraint)
+  }
+
+  moveJoint(position) {
+    this.jointBody.position.copy(position)
+    this.jointConstraint.update()
+  }
+
+  removeJointConstraint() {
+    this.world.removeConstraint(this.jointConstraint)
+    this.jointConstraint = undefined
+  }
+
+  isDraggingSetter() {
+    this.isDragging = true
+  }
+
+  hideClickMarker() {
+    this.clickMarker.visible = false
+  }
+
+  onDrag() {
+    this.clickMaker();
+    window.addEventListener('pointerdown', (e) => {
+      const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.cubeMesh, this.camera);
+      if (!hitPoint) {
+        return;
+      }
+
+      this.showClickMarker()
+      this.moveClickMarker(hitPoint);
+
+      this.moveMovementPlane(hitPoint, this.camera)
+      this.addJointConstraint(hitPoint, this.cubeBody)
+
+      requestAnimationFrame(() => this.isDraggingSetter());
+    });
+
+
+    window.addEventListener('pointermove', (e) => {
+      if (!this.isDragging) {
+        return
+      }
+      console.log(this.isDragging)
+
+
+      // Project the mouse onto the movement plane
+      const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.movementPlane, this.camera)
+
+      if (hitPoint) {
+        this.moveClickMarker(hitPoint)
+        this.moveJoint(hitPoint)
+      }
+    })
+
+
+    window.addEventListener('pointerup', () => {
+      this.isDragging = false
+
+      // Hide the marker mesh
+      this.hideClickMarker()
+
+      // Remove the mouse constraint from the world
+      this.removeJointConstraint()
+    })
+
+
+
+  }
+
+
+  addCube() {
+    const cubeGeometry = new THREE.BoxBufferGeometry(1, 1, 1, 10, 10);
+    const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
+    this.cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    this.cubeMesh.castShadow = true;
+    this.meshes.push(this.cubeMesh);
+    this.scene.add(this.cubeMesh);
+  }
+
+  floorMaker(sizes) {
+    const floorShape = new CANNON.Box(sizes);
+    const floorBody = new CANNON.Body({ mass: 0 });
+    return floorBody.addShape(floorShape);
+  }
+
+
+  cannonJsPhysics(){
+    this.bodies = [];
+
+    this.addCube();
+    this.world = new CANNON.World();
+    this.world.gravity.set(0, -9.7, 0);
+
+    this.groundBottom = this.floorMaker(new CANNON.Vec3(40,1,40));
+    this.groundTop = this.floorMaker(new CANNON.Vec3(40,1,40));
+
+    this.groundLeft = this.floorMaker(new CANNON.Vec3(1,40,40));
+    this.groundRight = this.floorMaker(new CANNON.Vec3(1,40,40));
+
+    this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
+    this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
+
+    this.groundBottom.position.set(0,-4.5,0);
+    this.groundTop.position.set(0,9.5,0);
+    this.groundLeft.position.set(-7,0,0);
+    this.groundRight.position.set(7,0,0);
+    this.front.position.set(0,0,2.5);
+    this.back.position.set(0,0,-2.5);
+
+
+    let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
+
+    allFloors.forEach(floor => {
+      this.world.addBody(floor);
+    })
+
+    const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
+    this.cubeBody = new CANNON.Body({ mass: 5 })
+    this.cubeBody.addShape(cubeShape);
+    this.cubeBody.position.set(0, 5, 0);
+    this.bodies.push(this.cubeBody);
+    this.world.addBody(this.cubeBody);
+
+
+    const jointShape = new CANNON.Sphere(0.1)
+    this.jointBody = new CANNON.Body({ mass: 0 })
+    this.jointBody.addShape(jointShape)
+    this.jointBody.collisionFilterGroup = 0
+    this.jointBody.collisionFilterMask = 0
+    this.world.addBody(this.jointBody)
+  }
+
+
+
 
   setModelForHoliday() {
     // Hier komen dan alle models in te recht
@@ -82,26 +272,32 @@ export default class Sketch {
       case 0 :
         o.model = Chikken;
         o.collisionBox = 'cylinder';
+        o.collidesWidth = {x: 0.014, y:0 ,z:0.28};
         break;
       case 1 :
         o.model = Bunny ;
         o.collisionBox = 'cylinder';
+        o.collidesWidth = {x:0.103, y:0.56 ,z:0};
         break;
       case 2 :
         o.model = Egg;
         o.collisionBox = 'sphere';
+        o.collidesWidth = {x:0, y:0 ,z:0.354};
         break;
       case 3 :
         o.model = RedEgg;
         o.collisionBox = 'sphere';
+        o.collidesWidth = {x:0, y:0 ,z:0.354};
         break;
       case 4 :
         o.model = BlueEgg;
         o.collisionBox = 'sphere';
+        o.collidesWidth = {x:0, y:0 ,z:0.354};
         break;
       case 5 :
         o.model = GreenEgg;
         o.collisionBox = 'sphere';
+        o.collidesWidth = {x:0, y:0 ,z:0.354};
         break;
     }
 
@@ -194,7 +390,7 @@ export default class Sketch {
 
       } );
 
-     this.fontbodyReg = this.world.add({
+     /* this.fontbodyReg = this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
         size:[5.5,0.6,3], // size of shape
         pos:[0,0,0], // start position in degree
@@ -206,7 +402,7 @@ export default class Sketch {
         restitution: 0.2,
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-        });
+        }); */
 
       geometry.computeBoundingBox();
 
@@ -224,7 +420,7 @@ export default class Sketch {
         height: 0.01,
       });
 
-      this.fontbodyLight =  this.world.add({
+     /* this.fontbodyLight =  this.world.add({
         type:'box', // type of shape : sphere, box, cylinder
         size:[3,1,3], // size of shape
         pos:[0,0.65,0], // start position in degree
@@ -237,6 +433,7 @@ export default class Sketch {
         belongsTo: 1, // The bits of the collision groups to which the shape belongs.
         collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
         });
+        */
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
       this.fontLight.position.set(-1.55,0.65,0);
@@ -258,7 +455,7 @@ export default class Sketch {
           let size = that.setSizeForBlock();
           let position = that.setPositionForBlock();;
           let color = that.setColorForBlock();
-          that.createBody(size,color,position);
+          //that.createBody(size,color,position);
           if (i < items ){
             loop();
           }
@@ -374,7 +571,7 @@ export default class Sketch {
   physics() {
     // Hier worden alle physcics ingesteld
     // Alles komt dan ook hierr terecht bv de walls / de wereld en de gravity
-    this.bodies = [];
+    //this.bodies = [];
 
     this.world = new OIMO.World({
       timestep: 1/60,
@@ -412,18 +609,23 @@ export default class Sketch {
   }
 
    createBody(size,color,position) {
+
      // Hier maken we een oobject aan die ingespawnt wordt waneer de pagina in laad
     let month = this.date.getMonth();
     let o = {};
     const itemPicker = this.setModelForHoliday();
     this.model = new Model(itemPicker.model, this.sceneloader);
     let mesh;
+
+    console.log(itemPicker.collidesWidth.x)
     if (month === 2 || month === 11) {
       // Dit deel is voor de costum models
       setTimeout(() => {
         let body = this.world.add({
           type: itemPicker.collisionBox, // type of shape : sphere, box, cylinder
-          size:[size/1.5,size/1.5,size/1.5], // size of shape
+          size:[size / 1.2,
+            size / 1.2,
+            size / 1.2], // size of shape
           pos:[position.x, position.y, position.z], // start position in degree
           rot:[0,0,90], // start rotation in degree
           move:true, // dynamic or statique
@@ -487,21 +689,27 @@ export default class Sketch {
   render() {
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
-    this.world.step();
-    this.body.awake();
-    this.body.setPosition(this.point);
-    this.Object.position.copy( this.body.getPosition());
-    this.Object.quaternion.copy( this.body.getQuaternion());
+    this.world.step(this.dt);
 
-    this.bodies.forEach(b => {
+    for (let i = 0; i !== this.meshes.length; i++) {
+      this.meshes[i].position.copy(this.bodies[i].position)
+      this.meshes[i].quaternion.copy(this.bodies[i].quaternion)
+    }
+   // this.body.awake();
+   // this.body.setPosition(this.point);
+   // this.Object.position.copy( this.body.getPosition());
+   // this.Object.quaternion.copy( this.body.getQuaternion());
+
+   /* this.bodies.forEach(b => {
       b.body.awake();
       b.mesh.position.copy( b.body.getPosition());
       b.mesh.quaternion.copy( b.body.getQuaternion());
     });
+    */
 
     this.renderer.render( this.scene, this.camera );
 
-    window.requestAnimationFrame(this.render.bind(this));
+    window.requestAnimationFrame(() => this.render());
   }
 }
 
