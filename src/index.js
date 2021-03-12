@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import './style.css';
 import GLTFLoader from 'three-gltf-loader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-
 // Load in modelx
 import Model from './js/Models/model';
 // Models
@@ -34,8 +33,9 @@ export default class Sketch {
     this.point = new THREE.Vector3(0,0,0)
     this.hemiLight = new THREE.HemisphereLight(0xffeeb1, 0x080820,0.6);
     this.spotLight = new THREE.SpotLight(0xffa95c,1.3);
-    this.spotLighttwo = new THREE.SpotLight(0xffa95c,1.6);
-    this.spotLight.position.set(-10,0,10);
+    this.spotLightTwo = new THREE.SpotLight(0xffa95c,0.8);
+    this.spotLight.position.set(10,0,10);
+    this.spotLightTwo.position.set(-10,0,10)
     this.hemiLight.position.set(5,0,5);
     this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
@@ -55,8 +55,7 @@ export default class Sketch {
 
     this.scene.add(this.hemiLight);
     this.scene.add(this.spotLight);
-    this.scene.add(this.spotLighttwo);
-
+    this.scene.add(this.spotLightTwo);
 
     this.setupResize();
     this.fontMaker();
@@ -68,9 +67,6 @@ export default class Sketch {
     this.render();
     this.resize();
   }
-
-
-
 
   // Deze functies dienen voor de model of cube te laten randomizen
 
@@ -486,6 +482,8 @@ export default class Sketch {
     }
   }
 
+
+
   render() {
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
@@ -502,6 +500,7 @@ export default class Sketch {
     });
 
     this.renderer.render( this.scene, this.camera );
+
     window.requestAnimationFrame(this.render.bind(this));
   }
 }
