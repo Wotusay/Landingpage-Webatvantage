@@ -424,7 +424,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    cannonDebugger(this.scene, this.world.bodies);
+    //cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
