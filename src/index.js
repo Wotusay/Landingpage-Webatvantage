@@ -157,7 +157,6 @@ export default class Sketch {
       this.bodies.forEach(b => {
         b.mesh.traverse((child) => {
           if (child instanceof THREE.Mesh){
-            console.log(e.touches[0]);
             const hitPoint = this.getHitPoint(e.touches[0].clientX, e.touches[0].clientY, child, this.camera);
             if (!hitPoint) {
               return;
