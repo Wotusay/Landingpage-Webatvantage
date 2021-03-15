@@ -118,7 +118,7 @@ export default class Sketch {
 
     this.jointBody.position.copy(position)
 
-    this.jointConstraint = new CANNON.PointToPointConstraint(constrainedBody, pivot, this.jointBody, new CANNON.Vec3(0, 0, 0))
+    this.jointConstraint = new CANNON.PointToPointConstraint(constrainedBody, pivot, this.jointBody, new CANNON.Vec3(0, 0, 0), 2)
 
     this.world.addConstraint(this.jointConstraint)
   }
@@ -264,49 +264,49 @@ export default class Sketch {
   collisionDecider(object,size) {
     let body;
 
-    const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const eggBodyBig = new CANNON.Body({mass:1.5, material: this.groundMaterial});
     const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const bunnyBodyMed = new CANNON.Body({mass:1.5, material: this.groundMaterial});
     const bunnyBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const chickenBodyBig = new CANNON.Body({mass:1.5, material: this.groundMaterial});
     const chickenBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
     // Chicken
     // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(-0.13, 0.40, 0)); //head
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.12, 0)); //tail botom
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.35, 0)); // tail top
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.18, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(-0.13, 0.40, 0)); //head
+    chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.12, 0)); //tail botom
+    chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.35, 0)); // tail top
     // Med
-    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.18, 0.18)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0)); //tail botom
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0)); // tail top
     // Bunny
     // Big
-    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
     bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.50, 0)); // ears
     bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
-    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.10, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
+    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
     bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0)); // ears
     bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0)); // tail
     bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0)); // nose
     // Egg
     // Big
     eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.45, 0));   //top end
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.51, 0));   //top end
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, -0.35, 0));  //botttom end
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.35, 0));  //botttom end
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.16), new CANNON.Vec3(0, 0, 0));      // Body
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.21, 0));   // Top end
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.22, 0));   // Top end
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, -0.15, 0));  // bottom end
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.15, 0));  // bottom end
     //eggBodyBig.position.set(0, 1, 0);
 
     switch(true){
@@ -386,20 +386,21 @@ export default class Sketch {
 
     // Adjust constraint equation parameters for ground/ground contact
     const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
-        friction: 0.4,
+        friction: 1,
         restitution: 0.5,
     });
 
     this.world.addContactMaterial(ground_ground_cm);
 
     const fontBody = new CANNON.Body({mass: 0, material:this.groundMaterial });
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.2,0.2)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.5,0.2,0.2)), new CANNON.Vec3(0, 0.8, 0)); // light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.1,0.1,0.2)), new CANNON.Vec3(-0.88, 0.99, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.1,0.2)), new CANNON.Vec3(1.1, 0.99, 0)); // Top tiny part of light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.17,1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.5,0.17,1.5)), new CANNON.Vec3(0, 0.8, 0)); // light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.1,0.05,1.5)), new CANNON.Vec3(-0.88, 0.99, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(1, 0.99, 0)); // Top tiny part of light font
     fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(-2.5,-0.02, 0));
     fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(2.5,-0.02, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.15,0.1,0.2)), new CANNON.Vec3(-1.85, 0.25, 0)); // Top tiny part of regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(-1.85, 0.15, 0)); // Top tiny part of regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
     fontBody.position.set(0,0,0);
     this.world.addBody(fontBody)
 
@@ -407,8 +408,8 @@ export default class Sketch {
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
-    this.front.position.set(0,0,2.5);
-    this.back.position.set(0,0,-2.5);
+    this.front.position.set(0,0,1.8);
+    this.back.position.set(0,0,-1.8);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -423,7 +424,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    //cannonDebugger(this.scene, this.world.bodies);
+    cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
