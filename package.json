@@ -37,6 +37,7 @@
   ],
   "dependencies": {
     "cannon-es": "^0.17.0",
+    "cannon-es-debugger": "^0.1.2",
     "dat.gui": "^0.7.7",
     "gltf-webpack-loader": "^1.0.6",
     "oimo": "^1.0.9",

@@ -12,5 +12,6 @@ export default class Model{
     this.loader.load(this.model, gltf => {
      return this.object = gltf.scene;
   })
+
 }
 };

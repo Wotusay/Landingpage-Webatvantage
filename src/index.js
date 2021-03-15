@@ -16,13 +16,13 @@ import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
 import * as CANNON from 'cannon-es'
-//import * as OIMO from 'oimo';
+import cannonDebugger from 'cannon-es-debugger'
+
 
 export default class Sketch {
   constructor(date) {
     this.date = date;
     this.isDragging = false;
-
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -54,7 +54,6 @@ export default class Sketch {
     this.meshes = [];
     this.jointConstraint;
 
-
     // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
     // De links is de decoder zelf om deze dan te gebruiken ook in production
     this.sceneloader = new GLTFLoader();
@@ -71,10 +70,7 @@ export default class Sketch {
     this.fontMaker();
     this.cannonJsPhysics();
     this.onDrag();
-    //this.physics();
-    //this.addMesh();
     this.time = 0;
-    //this.mouseMove();
     this.onLoad();
     this.render();
     this.resize();
@@ -115,7 +111,7 @@ export default class Sketch {
   }
 
   addJointConstraint(position, constrainedBody) {
-    const vector = new CANNON.Vec3().copy(position).vsub(constrainedBody.position)
+    const vector = new CANNON.Vec3().copy(position).vsub(constrainedBody.position);
 
     const antiRotation = constrainedBody.quaternion.inverse()
     const pivot = antiRotation.vmult(vector)
@@ -134,7 +130,12 @@ export default class Sketch {
 
   removeJointConstraint() {
     this.world.removeConstraint(this.jointConstraint)
-    this.jointConstraint = undefined
+    this.jointConstraint = undefined;
+
+
+    this.world.constraints.forEach( c => {
+      this.world.removeConstraint(c);
+    });
   }
 
   isDraggingSetter() {
@@ -147,29 +148,31 @@ export default class Sketch {
 
   onDrag() {
     this.clickMaker();
+
     window.addEventListener('pointerdown', (e) => {
-      const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.cubeMesh, this.camera);
-      if (!hitPoint) {
-        return;
-      }
+      this.bodies.forEach(b => {
+        b.mesh.traverse((child) => {
+          if (child instanceof THREE.Mesh){
+            const hitPoint = this.getHitPoint(e.clientX, e.clientY, child, this.camera);
+            if (!hitPoint) {
+              return;
+            }
+            this.showClickMarker()
+            this.moveClickMarker(hitPoint);
 
-      this.showClickMarker()
-      this.moveClickMarker(hitPoint);
-
-      this.moveMovementPlane(hitPoint, this.camera)
-      this.addJointConstraint(hitPoint, this.cubeBody)
+            this.moveMovementPlane(hitPoint, this.camera)
+            this.addJointConstraint(hitPoint, b.body)
+          }
+        })
+      })
 
       requestAnimationFrame(() => this.isDraggingSetter());
     });
-
 
     window.addEventListener('pointermove', (e) => {
       if (!this.isDragging) {
         return
       }
-      console.log(this.isDragging)
-
-
       // Project the mouse onto the movement plane
       const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.movementPlane, this.camera)
 
@@ -179,21 +182,18 @@ export default class Sketch {
       }
     })
 
-
     window.addEventListener('pointerup', () => {
       this.isDragging = false
-
       // Hide the marker mesh
       this.hideClickMarker()
-
       // Remove the mouse constraint from the world
-      this.removeJointConstraint()
+      this.removeJointConstraint();
+
+      this.world.constraints.forEach( c => {
+        this.world.removeConstraint(c);
+      });
     })
-
-
-
   }
-
 
   addCube() {
     const cubeGeometry = new THREE.BoxBufferGeometry(1, 1, 1, 10, 10);
@@ -201,7 +201,7 @@ export default class Sketch {
     this.cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
     this.cubeMesh.castShadow = true;
     this.meshes.push(this.cubeMesh);
-    this.scene.add(this.cubeMesh);
+    //this.scene.add(this.cubeMesh);
   }
 
   floorMaker(sizes) {
@@ -210,8 +210,111 @@ export default class Sketch {
     return floorBody.addShape(floorShape);
   }
 
+  collisionDecider(object,size) {
+    let body;
+    const eggBodyBig = new CANNON.Body({mass:1});
+    const eggBodyMed = new CANNON.Body({mass:1});
+
+    const bunnyBodyMed = new CANNON.Body({mass:1});
+    const bunnyBodyBig = new CANNON.Body({mass:1});
+
+    const chickenBodyBig = new CANNON.Body({mass:1});
+    const chickenBodyMed = new CANNON.Body({mass:1});
+
+    // Chicken
+    // Big
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(-0.13, 0.40, 0));
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.12, 0));
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.35, 0));
+    // Med
+    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.15, 0.18)), new CANNON.Vec3(-0.02, 0, 0));
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.2, 0));
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0));
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0));
+    // Bunny
+    // Big
+    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
+    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.50, 0));
+    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.35, -0.12, 0));
+    // Med
+    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.10, 0.10)), new CANNON.Vec3(-0.02, 0, 0));
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0));
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));
+    // Egg
+    // Big
+    eggBodyBig.addShape(new CANNON.Sphere(.33), new CANNON.Vec3(0.02, 0, 0));
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.35, 0));
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.30, 0));
+    //Med
+    eggBodyMed.addShape(new CANNON.Sphere(.16), new CANNON.Vec3(0.02, 0, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.13, 0));
+    //eggBodyBig.position.set(0, 1, 0);
+
+    switch(true){
+      case (object === 'egg' && size === 0.5):
+        body = eggBodyBig;
+        break;
+
+        case (object === 'egg' && size === 0.25):
+        body = eggBodyMed;
+        break;
+
+        case (object === 'bunny' && size === 0.5):
+        body = bunnyBodyBig;
+        break;
+
+        case (object === 'bunny' && size === 0.25):
+        body = bunnyBodyMed;
+        break;
+
+        case (object === 'chicken' && size === 0.5):
+        body = chickenBodyBig;
+        break;
+
+        case (object === 'chicken' && size === 0.25):
+        body = chickenBodyMed;
+        break;
+
+    }
+
+    return body;
+
+  }
+
+
+   convexHullMaker(size,position) {
+    let o = {};
+    let itemPicker =  this.setModelForHoliday();
+    this.model = new Model(itemPicker.model, this.sceneloader);
+
+    setTimeout(()=> {
+      const mesh = this.model.object;
+      if (mesh !== undefined ) {
+        let body =  this.collisionDecider(itemPicker.collisionBox,size)
+        mesh.scale.set(size/1.5,size/1.5,size/1.5);
+        if (body !== undefined) {
+          body.position.set(position.x, position.y, position.z);
+          o.mesh = mesh;
+          o.body = body;
+          this.scene.add(mesh);
+
+          this.world.addBody(body);
+          this.bodies.push(o);
+        }
+      }
+    },50)
+
+  }
 
   cannonJsPhysics(){
+    this.boxes = [];
     this.bodies = [];
 
     this.addCube();
@@ -241,24 +344,16 @@ export default class Sketch {
       this.world.addBody(floor);
     })
 
-    const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
-    this.cubeBody = new CANNON.Body({ mass: 5 })
-    this.cubeBody.addShape(cubeShape);
-    this.cubeBody.position.set(0, 5, 0);
-    this.bodies.push(this.cubeBody);
-    this.world.addBody(this.cubeBody);
-
-
     const jointShape = new CANNON.Sphere(0.1)
     this.jointBody = new CANNON.Body({ mass: 0 })
     this.jointBody.addShape(jointShape)
     this.jointBody.collisionFilterGroup = 0
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
+
+    //cannonDebugger(this.scene, this.world.bodies);
+
   }
-
-
-
 
   setModelForHoliday() {
     // Hier komen dan alle models in te recht
@@ -271,57 +366,33 @@ export default class Sketch {
     switch (numberGen) {
       case 0 :
         o.model = Chikken;
-        o.collisionBox = 'cylinder';
+        o.collisionBox = 'chicken';
         o.collidesWidth = {x: 0.014, y:0 ,z:0.28};
         break;
       case 1 :
         o.model = Bunny ;
-        o.collisionBox = 'cylinder';
+        o.collisionBox = 'bunny';
         o.collidesWidth = {x:0.103, y:0.56 ,z:0};
         break;
       case 2 :
         o.model = Egg;
-        o.collisionBox = 'sphere';
-        o.collidesWidth = {x:0, y:0 ,z:0.354};
+        o.collisionBox = 'egg';
         break;
       case 3 :
         o.model = RedEgg;
-        o.collisionBox = 'sphere';
-        o.collidesWidth = {x:0, y:0 ,z:0.354};
+        o.collisionBox = 'egg';
         break;
       case 4 :
         o.model = BlueEgg;
-        o.collisionBox = 'sphere';
-        o.collidesWidth = {x:0, y:0 ,z:0.354};
+        o.collisionBox = 'egg';
         break;
       case 5 :
         o.model = GreenEgg;
-        o.collisionBox = 'sphere';
-        o.collidesWidth = {x:0, y:0 ,z:0.354};
+        o.collisionBox = 'egg';
         break;
     }
 
     return o;
-  }
-
-  setColorForBlock() {
-    // Dit is er voor als er geen models zijn of geen feest is in deze maand
-    const number = 3
-    let numberGen = Math.floor(Math.random() * number);
-    let color;
-    switch (numberGen) {
-      case 0 :
-        color = 0x57BDA0;
-        break;
-      case 1 :
-        color = 0x7ED7FA;
-        break;
-      case 2 :
-        color = 0xE17474;
-        break;
-    }
-
-    return color;
   }
 
   setPositionForBlock() {
@@ -390,20 +461,6 @@ export default class Sketch {
 
       } );
 
-     /* this.fontbodyReg = this.world.add({
-        type:'box', // type of shape : sphere, box, cylinder
-        size:[5.5,0.6,3], // size of shape
-        pos:[0,0,0], // start position in degree
-        rot:[0,0,0], // start rotation in degree
-        move:false, // dynamic or statique
-        density: 1,
-        friction: 0.2,
-        noSleep:true,
-        restitution: 0.2,
-        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-        }); */
-
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
@@ -419,21 +476,6 @@ export default class Sketch {
         size: 0.5,
         height: 0.01,
       });
-
-     /* this.fontbodyLight =  this.world.add({
-        type:'box', // type of shape : sphere, box, cylinder
-        size:[3,1,3], // size of shape
-        pos:[0,0.65,0], // start position in degree
-        rot:[0,0,0], // start rotation in degree
-        move:false, // dynamic or statique
-        density: 1,
-        friction: 0.2,
-        noSleep:true,
-        restitution: 0.2,
-        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-        });
-        */
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
       this.fontLight.position.set(-1.55,0.65,0);
@@ -454,59 +496,14 @@ export default class Sketch {
           i++;
           let size = that.setSizeForBlock();
           let position = that.setPositionForBlock();;
-          let color = that.setColorForBlock();
-          //that.createBody(size,color,position);
+          that.convexHullMaker(size,position);
           if (i < items ){
             loop();
           }
-        }, 100);
+        }, 300);
       };
      loop();
     });
-  }
-
-  mouseMove() {
-    // Hier wordt er gechecked voor een eem mouse  / touch bewegging
-    // Dit werkt met een 3D plane
-    // Alles die op die 3d plane valt zal een bewegiing krijgen
-
-    let that = this;
-    this.testPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
-    // Desktop
-    window.addEventListener('mousemove',(event) => {
-
-
-      that.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      that.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-      that.raycaster.setFromCamera(that.mouse, that.camera);
-
-      let intersects = that.raycaster.intersectObjects([that.testPlane]);
-
-      if (intersects.length > 0) {
-        that.point = intersects[0].point;
-      }
-
-    }, false);
-
-    // For mobile
-    window.addEventListener('touchmove',(e) => {
-
-      let x = e.touches[0].clientX;
-      let y = e.touches[0].clientY;
-
-      that.mouse.x = (x / window.innerWidth) * 2 - 1;
-      that.mouse.y = - (y / window.innerHeight) * 2 + 1;
-
-      that.raycaster.setFromCamera(that.mouse, that.camera);
-
-      let intersects = that.raycaster.intersectObjects([that.testPlane]);
-
-      if (intersects.length > 0) {
-        that.point = intersects[0].point;
-      }
-
-    }, false);
   }
 
   setupResize() {
@@ -558,154 +555,15 @@ export default class Sketch {
 
   }
 
-  addMesh() {
-    // Dit is de mouse object
-    // Hier mee kan je de elementen mee bewgenen
-    // Dit volgt de volgt constant je muis maar is niet gerenderd
-    this.geometry = new THREE.BoxBufferGeometry(1);
-    this.geometry = new THREE.OctahedronBufferGeometry(1)
-    this.material = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
-    this.Object = new THREE.Mesh( this.geometry, this.material );
-  }
-
-  physics() {
-    // Hier worden alle physcics ingesteld
-    // Alles komt dan ook hierr terecht bv de walls / de wereld en de gravity
-    //this.bodies = [];
-
-    this.world = new OIMO.World({
-      timestep: 1/60,
-      iterations: 8,
-      broadphase: 2, // 1 brute force, 2 sweep and prune, 3 volume tree
-      worldscale: 1, // scale full world
-      random: true,  // randomize sample
-      info: false,   // calculate statistic or not
-      gravity: [0,-8.7,0]
-    });
-
-    this.body = this.world.add({
-      type:'box', // type of shape : sphere, box, cylinder
-      size:[1,1,1.8], // size of shape
-      pos:[0,0,0], // start position in degree
-      rot:[0,0,90], // start rotation in degree
-      move:true, // dynamic or statique
-      density: 0.5,
-      noSleep: true,
-      friction: 0.2,
-      restitution: 0.5,
-      belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-      collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-      });
-
-      //Floors
-    this.groundBottom = this.world.add({restitution: 0.2,size:[40,1,40], pos: [0,-4.5,0]});
-    this.groundTop = this.world.add({restitution: 0.2, size:[40,1,40], pos: [0,8.5,0]});
-
-    this.groundLeft = this.world.add({restitution: 0.2, size:[1,40,40], pos: [-7,0,0]  });
-    this.groundRight = this.world.add({restitution: 0.2, size:[1,40,40], pos: [7,0,0]});
-
-    this.front = this.world.add({size:[40,40,1], pos: [0,0,1.5]});
-    this.back = this.world.add({size:[40,40,1], pos: [0,0,-1.5]});
-  }
-
-   createBody(size,color,position) {
-
-     // Hier maken we een oobject aan die ingespawnt wordt waneer de pagina in laad
-    let month = this.date.getMonth();
-    let o = {};
-    const itemPicker = this.setModelForHoliday();
-    this.model = new Model(itemPicker.model, this.sceneloader);
-    let mesh;
-
-    console.log(itemPicker.collidesWidth.x)
-    if (month === 2 || month === 11) {
-      // Dit deel is voor de costum models
-      setTimeout(() => {
-        let body = this.world.add({
-          type: itemPicker.collisionBox, // type of shape : sphere, box, cylinder
-          size:[size / 1.2,
-            size / 1.2,
-            size / 1.2], // size of shape
-          pos:[position.x, position.y, position.z], // start position in degree
-          rot:[0,0,90], // start rotation in degree
-          move:true, // dynamic or statique
-          density: 1,
-          friction: 0.2,
-          noSleep:true,
-          restitution: 0.2,
-          belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-          collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-          });
-
-        mesh = this.model.object;
-        if (this.model.object.scale !== undefined) {
-          mesh.scale.set(size/1.5,size/1.5,size/1.5);
-          mesh.position.set(position.x, position.y, position.z);
-
-          o.body = body;
-          o.mesh = mesh;
-
-          this.scene.add(mesh);
-          this.bodies.push(o)
-        }
-        else {
-          return;
-        }
-
-      }, 600)
-    } else {
-      // dit is de default value
-      let body = this.world.add({
-        type:'cylinder', // type of shape : sphere, box, cylinder
-        size:[size,size,size], // size of shape
-        pos:[position.x, position.y, position.z], // start position in degree
-        rot:[0,0,90], // start rotation in degree
-        move:true, // dynamic or statique
-        density: 1,
-        friction: 0.2,
-        noSleep:true,
-        restitution: 0.2,
-        belongsTo: 1, // The bits of the collision groups to which the shape belongs.
-        collidesWith: 0xffffffff // The bits of the collision groups with which the shape collides.
-        });
-
-      mesh = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(size,size,size),
-        new THREE.MeshLambertMaterial({color:color})
-      );
-
-      mesh.position.set(position.x, position.y, position.z);
-
-      o.body = body;
-      o.mesh = mesh;
-
-      this.scene.add(mesh);
-      this.bodies.push(o);
-    }
-  }
-
-
-
   render() {
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
     this.world.step(this.dt);
 
-    for (let i = 0; i !== this.meshes.length; i++) {
-      this.meshes[i].position.copy(this.bodies[i].position)
-      this.meshes[i].quaternion.copy(this.bodies[i].quaternion)
-    }
-   // this.body.awake();
-   // this.body.setPosition(this.point);
-   // this.Object.position.copy( this.body.getPosition());
-   // this.Object.quaternion.copy( this.body.getQuaternion());
-
-   /* this.bodies.forEach(b => {
-      b.body.awake();
-      b.mesh.position.copy( b.body.getPosition());
-      b.mesh.quaternion.copy( b.body.getQuaternion());
-    });
-    */
+    this.bodies.forEach(b => {
+      b.mesh.position.copy( b.body.position);
+      b.mesh.quaternion.copy( b.body.quaternion);
+    })
 
     this.renderer.render( this.scene, this.camera );
 
