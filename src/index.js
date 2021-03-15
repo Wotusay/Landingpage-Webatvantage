@@ -263,6 +263,7 @@ export default class Sketch {
 
   collisionDecider(object,size) {
     let body;
+
     const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
     const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
@@ -274,38 +275,38 @@ export default class Sketch {
 
     // Chicken
     // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(-0.13, 0.40, 0));
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.12, 0));
-    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.35, 0));
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(-0.13, 0.40, 0)); //head
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.12, 0)); //tail botom
+    chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.35, 0)); // tail top
     // Med
-    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.18, 0.18)), new CANNON.Vec3(-0.02, 0, 0));
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0));
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0));
+    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.18, 0.18)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0)); //tail botom
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0)); // tail top
     // Bunny
     // Big
-    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
-    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.50, 0));
-    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.35, -0.12, 0));
+    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.50, 0)); // ears
+    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
-    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.10, 0.10)), new CANNON.Vec3(-0.02, 0, 0));
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0));
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));
+    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.10, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0)); // ears
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0)); // tail
+    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0)); // nose
     // Egg
     // Big
-    eggBodyBig.addShape(new CANNON.Sphere(.33), new CANNON.Vec3(0.02, 0, 0));
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.35, 0));
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.30, 0));
+    eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.45, 0));   //top end
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, -0.35, 0));  //botttom end
     //Med
-    eggBodyMed.addShape(new CANNON.Sphere(.16), new CANNON.Vec3(0.02, 0, 0));
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0));
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.13, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(.16), new CANNON.Vec3(0, 0, 0));      // Body
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.21, 0));   // Top end
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, -0.15, 0));  // bottom end
     //eggBodyBig.position.set(0, 1, 0);
 
     switch(true){
