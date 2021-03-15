@@ -398,8 +398,8 @@ export default class Sketch {
     const fontBody = new CANNON.Body({mass: 0, });
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.15,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.16,0.05,1.5)), new CANNON.Vec3(-0.78, 0.91, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(0.9, 0.91, 0)); // Top tiny part of light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.18,0.05,1.5)), new CANNON.Vec3(-0.78, 0.94, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(0.85, 0.94, 0)); // Top tiny part of light font
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
 
