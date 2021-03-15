@@ -81,7 +81,7 @@ export default class Sketch {
     const markerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
     this.clickMarker = new THREE.Mesh(markerGeometry, markerMaterial)
     this.clickMarker.visible = false // Hide it..
-    this.scene.add(this.clickMarker)
+    //this.scene.add(this.clickMarker)
 
 
     this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshBasicMaterial());
@@ -124,8 +124,10 @@ export default class Sketch {
   }
 
   moveJoint(position) {
-    this.jointBody.position.copy(position)
-    this.jointConstraint.update()
+    this.jointBody.position.copy(position);
+    if (this.jointConstraint !== undefined) {
+      this.jointConstraint.update()
+    }
   }
 
   removeJointConstraint() {
@@ -149,11 +151,14 @@ export default class Sketch {
   onDrag() {
     this.clickMaker();
 
-    window.addEventListener('pointerdown', (e) => {
+    //Mobile
+
+    window.addEventListener('touchstart', (e) => {
       this.bodies.forEach(b => {
         b.mesh.traverse((child) => {
           if (child instanceof THREE.Mesh){
-            const hitPoint = this.getHitPoint(e.clientX, e.clientY, child, this.camera);
+            console.log(e.touches[0]);
+            const hitPoint = this.getHitPoint(e.touches[0].clientX, e.touches[0].clientY, child, this.camera);
             if (!hitPoint) {
               return;
             }
@@ -169,6 +174,53 @@ export default class Sketch {
       requestAnimationFrame(() => this.isDraggingSetter());
     });
 
+    window.addEventListener('touchmove', (e) => {
+      if (!this.isDragging) {
+        return
+      }
+      // Project the mouse onto the movement plane
+      const hitPoint = this.getHitPoint(e.touches[0].clientX, e.touches[0].clientY, this.movementPlane, this.camera)
+
+      if (hitPoint) {
+        this.moveClickMarker(hitPoint)
+        this.moveJoint(hitPoint)
+      }
+    });
+
+    window.addEventListener('touchend', (e) => {
+      this.isDragging = false
+      // Hide the marker mesh
+      this.hideClickMarker()
+      // Remove the mouse constraint from the world
+      this.removeJointConstraint();
+
+      this.world.constraints.forEach( c => {
+        this.world.removeConstraint(c);
+      });
+    });
+
+    // Desktop
+
+    window.addEventListener('pointerdown', (e) => {
+      this.bodies.forEach(b => {
+        b.mesh.traverse((child) => {
+          if (child instanceof THREE.Mesh){
+            const hitPoint = this.getHitPoint(e.clientX, e.clientY, child, this.camera);
+            if (!hitPoint) {
+              return;
+            }
+            this.showClickMarker()
+            this.moveClickMarker(hitPoint);
+
+            this.moveMovementPlane(hitPoint, this.camera)
+            this.addJointConstraint(hitPoint, b.body)
+          }
+        })
+      });
+
+      requestAnimationFrame(() => this.isDraggingSetter());
+    });
+
     window.addEventListener('pointermove', (e) => {
       if (!this.isDragging) {
         return
@@ -180,7 +232,7 @@ export default class Sketch {
         this.moveClickMarker(hitPoint)
         this.moveJoint(hitPoint)
       }
-    })
+    });
 
     window.addEventListener('pointerup', () => {
       this.isDragging = false
@@ -206,30 +258,30 @@ export default class Sketch {
 
   floorMaker(sizes) {
     const floorShape = new CANNON.Box(sizes);
-    const floorBody = new CANNON.Body({ mass: 0 });
+    const floorBody = new CANNON.Body({ mass: 0});
     return floorBody.addShape(floorShape);
   }
 
   collisionDecider(object,size) {
     let body;
-    const eggBodyBig = new CANNON.Body({mass:1});
-    const eggBodyMed = new CANNON.Body({mass:1});
+    const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:1});
-    const bunnyBodyBig = new CANNON.Body({mass:1});
+    const bunnyBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const bunnyBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:1});
-    const chickenBodyMed = new CANNON.Body({mass:1});
+    const chickenBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const chickenBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
     // Chicken
     // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.25, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.3, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0));
     chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(-0.13, 0.40, 0));
     chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.12, 0));
     chickenBodyBig.addShape(new CANNON.Sphere(.08), new CANNON.Vec3(0.45, 0.35, 0));
     // Med
-    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.15, 0.18)), new CANNON.Vec3(-0.02, 0, 0));
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.2, 0));
+    chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.18, 0.18)), new CANNON.Vec3(-0.02, 0, 0));
+    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0));
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0));
     // Bunny
@@ -309,7 +361,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },50)
+    },100)
 
   }
 
@@ -330,13 +382,33 @@ export default class Sketch {
     this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
     this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
 
+    this.groundMaterial = new CANNON.Material("groundMaterial");
+
+    // Adjust constraint equation parameters for ground/ground contact
+    const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
+        friction: 0.4,
+        restitution: 0.5,
+    });
+
+    this.world.addContactMaterial(ground_ground_cm);
+
+    const fontBody = new CANNON.Body({mass: 0, material:this.groundMaterial });
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.2,0.2)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.5,0.2,0.2)), new CANNON.Vec3(0, 0.8, 0)); // light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.1,0.1,0.2)), new CANNON.Vec3(-0.88, 0.99, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.1,0.2)), new CANNON.Vec3(1.1, 0.99, 0)); // Top tiny part of light font
+    fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(-2.5,-0.02, 0));
+    fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(2.5,-0.02, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.15,0.1,0.2)), new CANNON.Vec3(-1.85, 0.25, 0)); // Top tiny part of regular font
+    fontBody.position.set(0,0,0);
+    this.world.addBody(fontBody)
+
     this.groundBottom.position.set(0,-4.5,0);
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
     this.front.position.set(0,0,2.5);
     this.back.position.set(0,0,-2.5);
-
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -351,8 +423,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    //cannonDebugger(this.scene, this.world.bodies);
-
+    cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -500,7 +571,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 300);
+        }, 200);
       };
      loop();
     });
