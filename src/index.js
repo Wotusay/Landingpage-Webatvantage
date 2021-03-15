@@ -94,7 +94,6 @@ export default class Sketch {
     that.raycaster.setFromCamera(that.mouse, camera);
     const hits = that.raycaster.intersectObject(mesh);
     return hits.length > 0 ? hits[0].point : undefined;
-
   }
 
   showClickMarker() {
@@ -264,13 +263,13 @@ export default class Sketch {
   collisionDecider(object,size) {
     let body;
 
-    const eggBodyBig = new CANNON.Body({mass:1.5, material: this.groundMaterial});
+    const eggBodyBig = new CANNON.Body({mass:2.5, material: this.groundMaterial});
     const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:1.5, material: this.groundMaterial});
+    const bunnyBodyMed = new CANNON.Body({mass:2.5, material: this.groundMaterial});
     const bunnyBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:1.5, material: this.groundMaterial});
+    const chickenBodyBig = new CANNON.Body({mass:2.5, material: this.groundMaterial});
     const chickenBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
     // Chicken
@@ -297,16 +296,18 @@ export default class Sketch {
     // Egg
     // Big
     eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.51, 0));   //top end
+    eggBodyBig.addShape(new CANNON.Sphere(.27), new CANNON.Vec3(0, 0.2, 0));      //body
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.505, 0));   //top end
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.35, 0));  //botttom end
     //Med
-    eggBodyMed.addShape(new CANNON.Sphere(.16), new CANNON.Vec3(0, 0, 0));      // Body
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.22, 0));   // Top end
+    eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0));
+    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.17, 0));      //body    // Body
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.255, 0));   // Top end
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.15, 0));  // bottom end
+    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.18, 0));  // bottom end
     //eggBodyBig.position.set(0, 1, 0);
 
     switch(true){
@@ -386,20 +387,23 @@ export default class Sketch {
 
     // Adjust constraint equation parameters for ground/ground contact
     const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
-        friction: 1,
-        restitution: 0.5,
+        friction: 0,
+        restitution: 0.7,
     });
+
+
 
     this.world.addContactMaterial(ground_ground_cm);
 
-    const fontBody = new CANNON.Body({mass: 0, material:this.groundMaterial });
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.17,1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.5,0.17,1.5)), new CANNON.Vec3(0, 0.8, 0)); // light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.1,0.05,1.5)), new CANNON.Vec3(-0.88, 0.99, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(1, 0.99, 0)); // Top tiny part of light font
-    fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(-2.5,-0.02, 0));
-    fontBody.addShape(new CANNON.Sphere(0.2), new CANNON.Vec3(2.5,-0.02, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(-1.85, 0.15, 0)); // Top tiny part of regular font
+    const fontBody = new CANNON.Body({mass: 0, });
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.15,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.16,0.05,1.5)), new CANNON.Vec3(-0.78, 0.91, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(0.9, 0.91, 0)); // Top tiny part of light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
+
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.07,1.5)), new CANNON.Vec3(-1.75, 0.15, 0)); // Top tiny part of regular font
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
     fontBody.position.set(0,0,0);
     this.world.addBody(fontBody)
@@ -408,8 +412,8 @@ export default class Sketch {
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
-    this.front.position.set(0,0,1.8);
-    this.back.position.set(0,0,-1.8);
+    this.front.position.set(0,0,2.5);
+    this.back.position.set(0,0,-1.2);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
