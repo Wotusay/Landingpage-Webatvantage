@@ -245,15 +245,6 @@ export default class Sketch {
     })
   }
 
-  addCube() {
-    const cubeGeometry = new THREE.BoxBufferGeometry(1, 1, 1, 10, 10);
-    const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x999999 });
-    this.cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    this.cubeMesh.castShadow = true;
-    this.meshes.push(this.cubeMesh);
-    //this.scene.add(this.cubeMesh);
-  }
-
   floorMaker(sizes) {
     const floorShape = new CANNON.Box(sizes);
     const floorBody = new CANNON.Body({ mass: 0});
@@ -263,20 +254,20 @@ export default class Sketch {
   collisionDecider(object,size) {
     let body;
 
-    const eggBodyBig = new CANNON.Body({mass:2.5, material: this.groundMaterial});
+    const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
     const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:2.5, material: this.groundMaterial});
+    const bunnyBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
     const bunnyBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:2.5, material: this.groundMaterial});
+    const chickenBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
     const chickenBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
 
     // Chicken
     // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.28, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.28, 0.4, 0.25)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(-0.13, 0.40, 0)); //head
-    chickenBodyBig.addShape(new CANNON.Sphere(0.15), new CANNON.Vec3(0.35, 0.25, 0)); //tail botom
+    chickenBodyBig.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0.35, 0.25, 0)); //tail botom
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
@@ -284,7 +275,7 @@ export default class Sketch {
     // Bunny
     // Big
     bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
-    bunnyBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0, 0.50, 0)); // ears
+    bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(0, 0.50, 0)); // ears
     bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
@@ -295,10 +286,10 @@ export default class Sketch {
     // Big
     eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
     eggBodyBig.addShape(new CANNON.Sphere(.27), new CANNON.Vec3(0, 0.2, 0));      //body
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.505, 0));   //top end
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.45, 0));   //top end
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.35, 0));  //botttom end
+    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.2, 0));  //botttom end
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0));
     eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.17, 0));      //body    // Body
@@ -360,15 +351,13 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },200)
+    },300)
 
   }
 
   cannonJsPhysics(){
     this.boxes = [];
     this.bodies = [];
-
-    this.addCube();
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.7, 0);
 
@@ -398,9 +387,6 @@ export default class Sketch {
     this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
     this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
     this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
-
     this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
     this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
     this.fontBody.position.set(0,0,0);
@@ -410,8 +396,8 @@ export default class Sketch {
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
-    this.front.position.set(0,0,2.5);
-    this.back.position.set(0,0,-1.2);
+    this.front.position.set(0,0,1.5);
+    this.back.position.set(0,0,-1.355);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -574,7 +560,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 250);
+        }, 300);
       };
      loop();
     });
@@ -662,8 +648,8 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
 
-        this.groundLeft.position.set(-7,0,0);
-        this.groundRight.position.set(7,0,0);
+        this.groundLeft.position.set(-8,0,0);
+        this.groundRight.position.set(8,0,0);
       }
 
   }
