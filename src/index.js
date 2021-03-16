@@ -72,8 +72,8 @@ export default class Sketch {
     this.onDrag();
     this.time = 0;
     this.onLoad();
-    this.render();
     this.resize();
+    this.render();
   }
 
   clickMaker() {
