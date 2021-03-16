@@ -364,7 +364,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },250)
+    },150)
 
   }
 
@@ -584,7 +584,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 250);
+        }, 150);
       };
      loop();
     });
