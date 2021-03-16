@@ -606,6 +606,7 @@ export default class Sketch {
 
     if(this.fontLight === undefined ) {
       setTimeout(() => {
+        console.log(true);
         this.resizeElements(this.width);
       },150);
     }
