@@ -117,7 +117,7 @@ export default class Sketch {
 
     this.jointBody.position.copy(position)
 
-    this.jointConstraint = new CANNON.PointToPointConstraint(constrainedBody, pivot, this.jointBody, new CANNON.Vec3(0, 0, 0), 2)
+    this.jointConstraint = new CANNON.PointToPointConstraint(constrainedBody, pivot, this.jointBody, new CANNON.Vec3(0, 0, 0))
 
     this.world.addConstraint(this.jointConstraint)
   }
@@ -362,7 +362,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },320)
+    },200)
 
   }
 
@@ -428,7 +428,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    //cannonDebugger(this.scene, this.world.bodies);
+    cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -576,7 +576,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 200);
+        }, 250);
       };
      loop();
     });
