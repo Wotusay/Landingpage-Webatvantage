@@ -77,17 +77,17 @@ export default class Sketch {
   }
 
   clickMaker() {
+    // The pivot point of the geometery
+    // The item where the object hangs on
     const markerGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8)
     const markerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
     this.clickMarker = new THREE.Mesh(markerGeometry, markerMaterial)
     this.clickMarker.visible = false // Hide it..
-    //this.scene.add(this.clickMarker)
-
-
     this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshBasicMaterial());
   }
   // Deze functies dienen voor de model of cube te laten randomizen
   getHitPoint(clientX, clientY, mesh, camera) {
+    // Here we get the hitpoint of the object
     let that = this;
     that.mouse.x = (clientX / window.innerWidth) * 2 - 1;
     that.mouse.y = - (clientY / window.innerHeight) * 2 + 1;
@@ -101,15 +101,19 @@ export default class Sketch {
   }
 
   moveClickMarker(position) {
+    // To move the pivot object
     this.clickMarker.position.copy(position);
   }
 
   moveMovementPlane(point, camera) {
+    // To move the plane
     this.movementPlane.position.copy(point);
     this.movementPlane.quaternion.copy(camera.quaternion);
   }
 
   addJointConstraint(position, constrainedBody) {
+    // To add the pivot point on the clicked object
+    // And here we add the constraint between the object and point
     const vector = new CANNON.Vec3().copy(position).vsub(constrainedBody.position);
 
     const antiRotation = constrainedBody.quaternion.inverse()
@@ -123,6 +127,7 @@ export default class Sketch {
   }
 
   moveJoint(position) {
+    // Here we move the point
     this.jointBody.position.copy(position);
     if (this.jointConstraint !== undefined) {
       this.jointConstraint.update()
@@ -130,6 +135,7 @@ export default class Sketch {
   }
 
   removeJointConstraint() {
+    // Here we remove all the points so they can freely fall
     this.world.removeConstraint(this.jointConstraint)
     this.jointConstraint = undefined;
 
@@ -140,6 +146,7 @@ export default class Sketch {
   }
 
   isDraggingSetter() {
+    // To set the dragging state
     this.isDragging = true
   }
 
@@ -252,6 +259,8 @@ export default class Sketch {
   }
 
   collisionDecider(object,size) {
+    // Here we make and decide the body of the object
+    // The bodies are compound bodies
     let body;
 
     const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
@@ -267,11 +276,11 @@ export default class Sketch {
     // Big
     chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.28, 0.4, 0.25)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(-0.13, 0.40, 0)); //head
-    chickenBodyBig.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0.35, 0.25, 0)); //tail botom
+    chickenBodyBig.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0.35, 0.25, 0)); //tail
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
-    chickenBodyMed.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.16, 0.12, 0)); //tail botom
+    chickenBodyMed.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.16, 0.12, 0)); //tail
     // Bunny
     // Big
     bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
@@ -284,15 +293,15 @@ export default class Sketch {
 
     // Egg
     // Big
-    eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
-    eggBodyBig.addShape(new CANNON.Sphere(.27), new CANNON.Vec3(0, 0.2, 0));      //body
+    eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body big
+    eggBodyBig.addShape(new CANNON.Sphere(.27), new CANNON.Vec3(0, 0.2, 0));      //body top small
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.45, 0));   //top end
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.2, 0));  //botttom end
     //Med
-    eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0));
-    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.17, 0));      //body    // Body
+    eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0)); //body big
+    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.17, 0));  // Body top small
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.255, 0));   // Top end
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
@@ -330,13 +339,17 @@ export default class Sketch {
 
   }
 
-
    convexHullMaker(size,position) {
+     // Here we make an decide the object
+     // And we add the objects to world
+    // Same with the meshes
     let o = {};
     let itemPicker =  this.setModelForHoliday();
     this.model = new Model(itemPicker.model, this.sceneloader);
 
     setTimeout(()=> {
+      // This time out is needed
+      // Because it  needs some time to load  the object
       const mesh = this.model.object;
       if (mesh !== undefined ) {
         let body =  this.collisionDecider(itemPicker.collisionBox,size)
@@ -355,12 +368,20 @@ export default class Sketch {
 
   }
 
-  cannonJsPhysics(){
-    this.boxes = [];
-    this.bodies = [];
-    this.world = new CANNON.World();
-    this.world.gravity.set(0, -9.7, 0);
+  fontBodyAdder() {
+        // This the whole font body
+        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
+        this.fontBody.position.set(0,0,0);
+        this.world.addBody(this.fontBody);
+  };
 
+  floors() {
     this.groundBottom = this.floorMaker(new CANNON.Vec3(40,1,40));
     this.groundTop = this.floorMaker(new CANNON.Vec3(40,1,40));
 
@@ -369,28 +390,6 @@ export default class Sketch {
 
     this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
     this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
-
-    this.groundMaterial = new CANNON.Material("groundMaterial");
-
-    // Adjust constraint equation parameters for ground/ground contact
-    const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
-        friction: 0.3,
-        restitution: 0.5,
-    });
-
-
-
-    this.world.addContactMaterial(ground_ground_cm);
-
-    this.fontBody = new CANNON.Body({mass: 0, });
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
-    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
-    this.fontBody.position.set(0,0,0);
-    this.world.addBody(this.fontBody)
 
     this.groundBottom.position.set(0,-4.5,0);
     this.groundTop.position.set(0,9.5,0);
@@ -403,15 +402,40 @@ export default class Sketch {
 
     allFloors.forEach(floor => {
       this.world.addBody(floor);
-    })
+    });
+  };
 
-    const jointShape = new CANNON.Sphere(0.1)
-    this.jointBody = new CANNON.Body({ mass: 0 })
-    this.jointBody.addShape(jointShape)
-    this.jointBody.collisionFilterGroup = 0
-    this.jointBody.collisionFilterMask = 0
-    this.world.addBody(this.jointBody)
+  constraintMaker() {
+    const jointShape = new CANNON.Sphere(0.1);
+    this.jointBody = new CANNON.Body({ mass: 0 });
+    this.jointBody.addShape(jointShape);
+    this.jointBody.collisionFilterGroup = 0;
+    this.jointBody.collisionFilterMask = 0;
+    this.world.addBody(this.jointBody);
+  }
 
+  cannonJsPhysics(){
+    // Here we set all the physcis
+    // The walls / floors are also set here
+    this.boxes = [];
+    this.bodies = [];
+    this.world = new CANNON.World();
+    this.world.gravity.set(0, -9.7, 0);
+
+    // Materials are needed to set a friction an restitution on a body
+    this.groundMaterial = new CANNON.Material("groundMaterial");
+    const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
+        friction: 0.3,
+        restitution: 0.5,
+    });
+    this.world.addContactMaterial(ground_ground_cm);
+
+    this.fontBodyAdder();
+    // The whole floor are made here
+    this.floors();
+    // The pivot point between elemenets
+    this.constraintMaker();
+    // This a cannon debugger when u want to see alle the shapes of the collisions
     //cannonDebugger(this.scene, this.world.bodies);
   }
 
@@ -422,7 +446,7 @@ export default class Sketch {
     const number = 6;
     let numberGen = Math.floor(Math.random() * number);
 
-    let o = {}
+    let o = {};
     switch (numberGen) {
       case 0 :
         o.model = Chikken;
@@ -450,10 +474,10 @@ export default class Sketch {
         o.model = GreenEgg;
         o.collisionBox = 'egg';
         break;
-    }
+    };
 
     return o;
-  }
+  };
 
   setPositionForBlock() {
         // Hier komen dan alle posities van de objecten terechtn
@@ -482,15 +506,15 @@ export default class Sketch {
       case 6 :
         position = {x:3 ,y:5 ,z:0};
         break;
-    }
+    };
 
     return position;
-  }
+  };
 
   setSizeForBlock() {
     // Hier komen dan alle sizes voor de elementen
     const number = 3;
-    const sizes = { s:0.15, m:0.25, b:0.5}
+    const sizes = { s:0.15, m:0.25, b:0.5};
     let numberGen = Math.floor(Math.random() * number);
     let size;
     switch (numberGen) {
@@ -503,10 +527,10 @@ export default class Sketch {
       case 2 :
         size = sizes.b;
         break;
-    }
+    };
 
     return size;
-  }
+  };
 
   fontMaker() {
     // Hier worden de fonts ingeladen
@@ -542,7 +566,7 @@ export default class Sketch {
       this.scene.add(this.fontLight);
     });
 
-  }
+  };
 
   onLoad() {
     // Hier worden dan alle 3d elmenen op geroept.
@@ -564,11 +588,11 @@ export default class Sketch {
       };
      loop();
     });
-  }
+  };
 
   setupResize() {
     window.addEventListener('resize', this.resize.bind(this))
-  }
+  };
 
   resize() {
     // Hier kijken we voor het element te kunnen resizen
@@ -586,88 +610,84 @@ export default class Sketch {
     }
     else {
       this.resizeElements(this.width);
-    }
-
-  }
+    };
+  };
 
 
   resizeElements(width) {
     // Resize chekker
     switch (true) {
       case(width >= 375 && width <= 767):
+        // Scale of the font
         this.fontLight.scale.set(0.65,0.65,0.65);
         this.fontLight.position.set(-1,0.65,0);
         this.fontBold.scale.set(0.65,0.65,0.65);
         this.fontBold.position.set(-1.75,0.15,0);
+        // Body of the font
         this.world.removeBody(this.fontBody);
         this.fontBody = new CANNON.Body({mass: 0, });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.18, 1.5)), new CANNON.Vec3(0, 0.2, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1,0.15,1.2)), new CANNON.Vec3(0, 0.66, 0)); // light font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
-
+        // The left and right wall
         this.groundLeft.position.set(-3.4,0,0);
         this.groundRight.position.set(3.4,0,0);
         break;
       case(width >= 768 && width <= 1023):
+        // The scale of the font
         this.fontLight.scale.set(0.83,0.83,0.83);
         this.fontLight.position.set(-1.2,0.675,0);
         this.fontBold.scale.set(0.83,0.83,0.83);
         this.fontBold.position.set(-2.2,0,0);
+        // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody = new CANNON.Body({mass: 0});
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.9,0.18, 1.5)), new CANNON.Vec3(0, 0.1, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.2,0.15,1.2)), new CANNON.Vec3(0, 0.86, 0)); // light font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
-
+        // The left and right wall
         this.groundLeft.position.set(-5,0,0);
         this.groundRight.position.set(5,0,0);
-
         break;
       case(width >= 1024):
+        // The scale of the font
         this.fontLight.scale.set(1,1,1);
         this.fontLight.position.set(-1.55,0.65,0);
         this.fontBold.scale.set(1,1,1);
         this.fontBold.position.set(-2.7,-0.2,0);
-
+        // Body of the font
         this.world.removeBody(this.fontBody);
         this.fontBody = new CANNON.Body({mass: 0, });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
-
+        // The left and right wall
         this.groundLeft.position.set(-8,0,0);
         this.groundRight.position.set(8,0,0);
-      }
+      };
 
-  }
+  };
 
   render() {
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
     this.world.step(this.dt);
-
+    // To link all the bodies to the right mesh
     this.bodies.forEach(b => {
       b.mesh.position.copy( b.body.position);
       b.mesh.quaternion.copy( b.body.quaternion);
-    })
+    });
 
     this.renderer.render( this.scene, this.camera );
-
     window.requestAnimationFrame(() => this.render());
-  }
+  };
 }
 
 let date = new Date();
