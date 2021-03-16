@@ -418,7 +418,7 @@ export default class Sketch {
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
     allFloors.forEach(floor => {
-      //this.world.addBody(floor);
+      this.world.addBody(floor);
     })
 
     const jointShape = new CANNON.Sphere(0.1)
@@ -428,7 +428,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    //cannonDebugger(this.scene, this.world.bodies);
+    cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
