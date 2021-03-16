@@ -367,12 +367,13 @@ export default class Sketch {
         this.fontBody = new CANNON.Body({mass: 0, });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
+
   };
 
   floors() {
@@ -555,13 +556,12 @@ export default class Sketch {
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
       this.fontLight.scale.set(1,1,1);
-      this.fontLight.position.set(-1.55,0.65,0.55);
-
+      this.fontLight.position.set(-1.55,0.65,0);
       this.fontBold.scale.set(1,1,1);
-      this.fontBold.position.set(-2.7,-0.2,0.55);
-
+      this.fontBold.position.set(-2.7,-0.2,0);
       this.scene.add(this.fontLight);
       this.scene.add(this.fontBold);
+
     });
 
   };
@@ -654,14 +654,14 @@ export default class Sketch {
       case(width >= 1024):
         // The scale of the font
         this.fontLight.scale.set(1,1,1);
-        this.fontLight.position.set(-1.55,0.65,0.55);
+        this.fontLight.position.set(-1.55,0.65,0);
         this.fontBold.scale.set(1,1,1);
-        this.fontBold.position.set(-2.7,-0.2,0.55);
+        this.fontBold.position.set(-2.7,-0.2,0);
         // Body of the font
         this.world.removeBody(this.fontBody);
         this.fontBody = new CANNON.Body({mass: 0, STATIC:1, allowSleep: false });
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 4.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.8,0.18,4.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
