@@ -362,7 +362,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },100)
+    },320)
 
   }
 
