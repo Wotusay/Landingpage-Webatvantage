@@ -396,14 +396,14 @@ export default class Sketch {
     this.world.addContactMaterial(ground_ground_cm);
 
     const fontBody = new CANNON.Body({mass: 0, });
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.52,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.15,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.18,0.05,1.5)), new CANNON.Vec3(-0.78, 0.94, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.05,1.5)), new CANNON.Vec3(0.85, 0.94, 0)); // Top tiny part of light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
 
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.07,1.5)), new CANNON.Vec3(-1.75, 0.15, 0)); // Top tiny part of regular font
+    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
     fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
     fontBody.position.set(0,0,0);
     this.world.addBody(fontBody)
@@ -418,7 +418,7 @@ export default class Sketch {
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
     allFloors.forEach(floor => {
-      this.world.addBody(floor);
+      //this.world.addBody(floor);
     })
 
     const jointShape = new CANNON.Sphere(0.1)
@@ -428,7 +428,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    cannonDebugger(this.scene, this.world.bodies);
+    //cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
