@@ -574,6 +574,7 @@ export default class Sketch {
     let that = this ;
     window.addEventListener('load', (e) => {
       const items = 100;
+      that.resize();
       let i = 0;
       const loop = () => {
         setTimeout(() => {
