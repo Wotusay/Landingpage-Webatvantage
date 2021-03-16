@@ -274,7 +274,7 @@ export default class Sketch {
 
     // Chicken
     // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.18, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
+    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.28, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(-0.13, 0.40, 0)); //head
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.12, 0)); //tail botom
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.35, 0)); // tail top
