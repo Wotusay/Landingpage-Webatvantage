@@ -542,8 +542,6 @@ export default class Sketch {
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-2.7,0.14,1.4);
-      this.scene.add(this.fontBold);
     });
 
 
@@ -556,8 +554,14 @@ export default class Sketch {
       });
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontLight.position.set(-1.55,0.65,0);
+      this.fontLight.scale.set(1,1,1);
+      this.fontLight.position.set(-1.55,0.65,0.55);
+
+      this.fontBold.scale.set(1,1,1);
+      this.fontBold.position.set(-2.7,-0.2,0.55);
+
       this.scene.add(this.fontLight);
+      this.scene.add(this.fontBold);
     });
 
   };
