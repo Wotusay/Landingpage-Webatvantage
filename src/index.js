@@ -396,7 +396,7 @@ export default class Sketch {
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
     this.front.position.set(0,0,1.5);
-    this.back.position.set(0,0,-1.385);
+    this.back.position.set(0,0,-1.45);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
