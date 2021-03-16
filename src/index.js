@@ -364,7 +364,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },150)
+    },100)
 
   }
 
@@ -584,7 +584,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 150);
+        }, 100);
       };
      loop();
     });
@@ -606,7 +606,7 @@ export default class Sketch {
     if(this.fontLight === undefined ) {
       setTimeout(() => {
         this.resizeElements(this.width);
-      },220);
+      },150);
     }
     else {
       this.resizeElements(this.width);
