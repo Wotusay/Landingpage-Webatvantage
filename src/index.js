@@ -263,14 +263,14 @@ export default class Sketch {
     // The bodies are compound bodies
     let body;
 
-    const eggBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
-    const eggBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const eggBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const eggBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
-    const bunnyBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const bunnyBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const bunnyBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:1, material: this.groundMaterial});
-    const chickenBodyMed = new CANNON.Body({mass:1, material: this.groundMaterial});
+    const chickenBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const chickenBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
     // Chicken
     // Big
@@ -279,8 +279,7 @@ export default class Sketch {
     chickenBodyBig.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.36, 0.25, 0)); //tail
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
-    chickenBodyMed.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.16, 0.12, 0)); //tail
+    chickenBodyMed.addShape(new CANNON.Sphere(.1), new CANNON.Vec3(0.16, 0.12, 0)); //tail
     // Bunny
     // Big
     bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
@@ -288,8 +287,7 @@ export default class Sketch {
     bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
-    bunnyBodyMed.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(0.04, 0.21, 0)); // ears
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0)); // tail
+    bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.04, 0.08, 0.05)), new CANNON.Vec3(0.04, 0.14, 0)); // ears
 
     // Egg
     // Big
@@ -301,11 +299,8 @@ export default class Sketch {
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.2, 0));  //botttom end
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0)); //body big
-    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.14, 0));  // Body top small
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.18, 0));  // bottom end
-    //eggBodyBig.position.set(0, 1, 0);
+    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.13, 0));  // Body top small
+
 
     switch(true){
       case (object === 'egg' && size === 0.3):
@@ -435,7 +430,7 @@ export default class Sketch {
     // The pivot point between elemenets
     this.constraintMaker();
     // This a cannon debugger when u want to see alle the shapes of the collisions
-    //cannonDebugger(this.scene, this.world.bodies);
+    // cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -660,7 +655,7 @@ export default class Sketch {
         this.fontBold.position.set(-2.7,-0.2,0.55);
         // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
+        this.fontBody = new CANNON.Body({mass: 0, STATIC:1, allowSleep: false });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 4.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.8,0.18,4.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
