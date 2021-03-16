@@ -301,15 +301,14 @@ export default class Sketch {
     eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.2, 0));  //botttom end
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0)); //body big
-    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.17, 0));  // Body top small
-    eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.255, 0));   // Top end
+    eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.14, 0));  // Body top small
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0));  // Left side
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0));   // Right side
     eggBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.18, 0));  // bottom end
     //eggBodyBig.position.set(0, 1, 0);
 
     switch(true){
-      case (object === 'egg' && size === 0.5):
+      case (object === 'egg' && size === 0.3):
         body = eggBodyBig;
         break;
 
@@ -317,7 +316,7 @@ export default class Sketch {
         body = eggBodyMed;
         break;
 
-        case (object === 'bunny' && size === 0.5):
+        case (object === 'bunny' && size === 0.3):
         body = bunnyBodyBig;
         break;
 
@@ -325,7 +324,7 @@ export default class Sketch {
         body = bunnyBodyMed;
         break;
 
-        case (object === 'chicken' && size === 0.5):
+        case (object === 'chicken' && size === 0.3):
         body = chickenBodyBig;
         break;
 
@@ -395,8 +394,8 @@ export default class Sketch {
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
-    this.front.position.set(0,0,1.5);
-    this.back.position.set(0,0,-1.45);
+    this.front.position.set(0,0,1.65);
+    this.back.position.set(0,0,-1);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -514,18 +513,18 @@ export default class Sketch {
   setSizeForBlock() {
     // Hier komen dan alle sizes voor de elementen
     const number = 3;
-    const sizes = { s:0.15, m:0.25, b:0.5};
+    const sizes = { s:0.15, m:0.25, b:0.3};
     let numberGen = Math.floor(Math.random() * number);
     let size;
     switch (numberGen) {
       case 0 :
-        size = sizes.s;
+        size = sizes.m;
         break;
       case 1 :
         size = sizes.m;
         break;
       case 2 :
-        size = sizes.b;
+        size = sizes.m;
         break;
     };
 
@@ -548,7 +547,7 @@ export default class Sketch {
       geometry.computeBoundingBox();
 
       this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontBold.position.set(-2.7,-0.2,0);
+      this.fontBold.position.set(-2.7,0.14,1.4);
       this.scene.add(this.fontBold);
     });
 
@@ -573,7 +572,7 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 100;
+      const items = 150;
       that.resize();
       let i = 0;
       const loop = () => {
@@ -627,7 +626,7 @@ export default class Sketch {
         this.fontBold.position.set(-1.75,0.15,0);
         // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.18, 1.5)), new CANNON.Vec3(0, 0.2, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1,0.15,1.2)), new CANNON.Vec3(0, 0.66, 0)); // light font
         this.fontBody.position.set(0,0,0);
@@ -644,7 +643,7 @@ export default class Sketch {
         this.fontBold.position.set(-2.2,0,0);
         // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0});
+        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.9,0.18, 1.5)), new CANNON.Vec3(0, 0.1, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.2,0.15,1.2)), new CANNON.Vec3(0, 0.86, 0)); // light font
         this.fontBody.position.set(0,0,0);
@@ -656,14 +655,14 @@ export default class Sketch {
       case(width >= 1024):
         // The scale of the font
         this.fontLight.scale.set(1,1,1);
-        this.fontLight.position.set(-1.55,0.65,0);
+        this.fontLight.position.set(-1.55,0.65,0.55);
         this.fontBold.scale.set(1,1,1);
-        this.fontBold.position.set(-2.7,-0.2,0);
+        this.fontBold.position.set(-2.7,-0.2,0.55);
         // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, });
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 4.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.8,0.18,4.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
