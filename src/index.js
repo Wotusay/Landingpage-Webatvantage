@@ -351,7 +351,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },300)
+    },250)
 
   }
 
@@ -375,7 +375,7 @@ export default class Sketch {
     // Adjust constraint equation parameters for ground/ground contact
     const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
         friction: 0.3,
-        restitution: 0.7,
+        restitution: 0.5,
     });
 
 
@@ -397,7 +397,7 @@ export default class Sketch {
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
     this.front.position.set(0,0,1.5);
-    this.back.position.set(0,0,-1.355);
+    this.back.position.set(0,0,-1.385);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -560,7 +560,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 300);
+        }, 250);
       };
      loop();
     });
