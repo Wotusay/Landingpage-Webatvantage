@@ -276,23 +276,21 @@ export default class Sketch {
     // Big
     chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.28, 0.4, 0.28)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(-0.13, 0.40, 0)); //head
-    chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.12, 0)); //tail botom
-    chickenBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0.45, 0.35, 0)); // tail top
+    chickenBodyBig.addShape(new CANNON.Sphere(0.15), new CANNON.Vec3(0.35, 0.25, 0)); //tail botom
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.05, 0.25, 0));  //head
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.15, 0.12, 0)); //tail botom
-    chickenBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.24, 0.2, 0)); // tail top
+    chickenBodyMed.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.16, 0.12, 0)); //tail botom
     // Bunny
     // Big
     bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
-    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.50, 0)); // ears
-    bunnyBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
+    bunnyBodyBig.addShape(new CANNON.Sphere(.06), new CANNON.Vec3(0, 0.50, 0)); // ears
+    bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0, 0.17, 0)); // ears
+    bunnyBodyMed.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(0.04, 0.21, 0)); // ears
     bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.13, 0, 0)); // tail
-    bunnyBodyMed.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.13, 0, 0)); // nose
+
     // Egg
     // Big
     eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body
@@ -387,7 +385,7 @@ export default class Sketch {
 
     // Adjust constraint equation parameters for ground/ground contact
     const ground_ground_cm = new CANNON.ContactMaterial(this.groundMaterial, this.groundMaterial, {
-        friction: 0,
+        friction: 0.3,
         restitution: 0.7,
     });
 
@@ -395,18 +393,18 @@ export default class Sketch {
 
     this.world.addContactMaterial(ground_ground_cm);
 
-    const fontBody = new CANNON.Body({mass: 0, });
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
+    this.fontBody = new CANNON.Body({mass: 0, });
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
 
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
-    fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
-    fontBody.position.set(0,0,0);
-    this.world.addBody(fontBody)
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
+    this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
+    this.fontBody.position.set(0,0,0);
+    this.world.addBody(this.fontBody)
 
     this.groundBottom.position.set(0,-4.5,0);
     this.groundTop.position.set(0,9.5,0);
@@ -428,7 +426,7 @@ export default class Sketch {
     this.jointBody.collisionFilterMask = 0
     this.world.addBody(this.jointBody)
 
-    cannonDebugger(this.scene, this.world.bodies);
+    //cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -615,19 +613,58 @@ export default class Sketch {
         this.fontLight.position.set(-1,0.65,0);
         this.fontBold.scale.set(0.65,0.65,0.65);
         this.fontBold.position.set(-1.75,0.15,0);
+        this.world.removeBody(this.fontBody);
+        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.18, 1.5)), new CANNON.Vec3(0, 0.2, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1,0.15,1.2)), new CANNON.Vec3(0, 0.66, 0)); // light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
+        this.fontBody.position.set(0,0,0);
+        this.world.addBody(this.fontBody);
+
+        this.groundLeft.position.set(-3.4,0,0);
+        this.groundRight.position.set(3.4,0,0);
         break;
       case(width >= 768 && width <= 1023):
         this.fontLight.scale.set(0.83,0.83,0.83);
         this.fontLight.position.set(-1.2,0.675,0);
         this.fontBold.scale.set(0.83,0.83,0.83);
         this.fontBold.position.set(-2.2,0,0);
+        this.world.removeBody(this.fontBody);
+        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.9,0.18, 1.5)), new CANNON.Vec3(0, 0.1, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.2,0.15,1.2)), new CANNON.Vec3(0, 0.86, 0)); // light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
+        this.fontBody.position.set(0,0,0);
+        this.world.addBody(this.fontBody);
+
+        this.groundLeft.position.set(-5,0,0);
+        this.groundRight.position.set(5,0,0);
+
         break;
       case(width >= 1024):
         this.fontLight.scale.set(1,1,1);
         this.fontLight.position.set(-1.55,0.65,0);
         this.fontBold.scale.set(1,1,1);
         this.fontBold.position.set(-2.7,-0.2,0);
-    }
+
+        this.world.removeBody(this.fontBody);
+        this.fontBody = new CANNON.Body({mass: 0, });
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.03,0.09,1.5)), new CANNON.Vec3(0.88, 0.935, 0)); // Top tiny part of light font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, 1.2));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2,2,0)), new CANNON.Vec3(0, 0, -1));
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.27,0.1,1.5)), new CANNON.Vec3(-1.8, 0.18, 0)); // Top tiny part of regular font
+        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
+        this.fontBody.position.set(0,0,0);
+        this.world.addBody(this.fontBody);
+
+        this.groundLeft.position.set(-7,0,0);
+        this.groundRight.position.set(7,0,0);
+      }
 
   }
 
