@@ -66,8 +66,8 @@ export default class Sketch {
     this.scene.add(this.spotLight);
     this.scene.add(this.spotLightTwo);
 
-    this.setupResize();
     this.fontMaker();
+    this.setupResize();
     this.cannonJsPhysics();
     this.onDrag();
     this.time = 0;
@@ -532,7 +532,7 @@ export default class Sketch {
     // Alle fonts werken niett met pixels maar met meter
     // Dus pas op als je iets aan past
     // Regular
-    this.loader.load(fontPathTwo, (font) => {
+    this.loader.loadAsync(fontPathTwo, (font) => {
       let geometry = new THREE.TextGeometry( 'online experiences', {
         font: font,
         size: 0.5,
@@ -547,7 +547,7 @@ export default class Sketch {
 
 
     // Light
-    this.loader.load(fontPathOne, (font) => {
+    this.loader.loadAsync(fontPathOne, (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
@@ -561,7 +561,7 @@ export default class Sketch {
       this.fontBold.position.set(-2.7,-0.2,0);
       this.scene.add(this.fontLight);
       this.scene.add(this.fontBold);
-
+      
     });
 
   };
