@@ -254,7 +254,7 @@ export default class Sketch {
 
   floorMaker(sizes) {
     const floorShape = new CANNON.Box(sizes);
-    const floorBody = new CANNON.Body({ mass: 0});
+    const floorBody = new CANNON.Body({ mass: 0, allowSleep: false});
     return floorBody.addShape(floorShape);
   }
 
@@ -532,7 +532,7 @@ export default class Sketch {
     // Alle fonts werken niett met pixels maar met meter
     // Dus pas op als je iets aan past
     // Regular
-    this.loader.loadAsync(fontPathTwo, (font) => {
+    this.loader.load(fontPathTwo, (font) => {
       let geometry = new THREE.TextGeometry( 'online experiences', {
         font: font,
         size: 0.5,
@@ -547,7 +547,7 @@ export default class Sketch {
 
 
     // Light
-    this.loader.loadAsync(fontPathOne, (font) => {
+    this.loader.load(fontPathOne, (font) => {
       let geometry = new THREE.TextGeometry( 'tailor-made', {
         font: font,
         size: 0.5,
@@ -561,7 +561,7 @@ export default class Sketch {
       this.fontBold.position.set(-2.7,-0.2,0);
       this.scene.add(this.fontLight);
       this.scene.add(this.fontBold);
-      
+
     });
 
   };
@@ -631,8 +631,8 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        this.groundLeft.position.set(-3.4,0,0);
-        this.groundRight.position.set(3.4,0,0);
+        this.groundLeft.position.set(-(width/140),0,0);
+        this.groundRight.position.set(width/140,0,0);
         break;
       case(width >= 768 && width <= 1023):
         // The scale of the font
@@ -648,8 +648,8 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        this.groundLeft.position.set(-5,0,0);
-        this.groundRight.position.set(5,0,0);
+        this.groundLeft.position.set(-(width/160),0,0);
+        this.groundRight.position.set(width/160,0,0);
         break;
       case(width >= 1024):
         // The scale of the font
@@ -669,8 +669,8 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        this.groundLeft.position.set(-8,0,0);
-        this.groundRight.position.set(8,0,0);
+        this.groundLeft.position.set(-(width/160),0,0);
+        this.groundRight.position.set((width/160),0,0);
       };
 
   };
