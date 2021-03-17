@@ -333,13 +333,13 @@ export default class Sketch {
 
   }
 
-   convexHullMaker(size,position) {
+  convexHullMaker(size,position) {
      // Here we make an decide the object
      // And we add the objects to world
     // Same with the meshes
     let o = {};
     let itemPicker =  this.setModelForHoliday();
-    this.model = new Model(itemPicker.model, this.sceneloader);
+    this.model =  new Model(itemPicker.model, this.sceneloader);
 
     setTimeout(()=> {
       // This time out is needed
@@ -358,7 +358,7 @@ export default class Sketch {
           this.bodies.push(o);
         }
       }
-    },100)
+    },190)
 
   }
 
@@ -571,11 +571,11 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 60;
+      const items = 90;
       that.resize();
       let i = 0;
       const loop = () => {
-        setTimeout(() => {
+        setTimeout( () => {
           i++;
           let size = that.setSizeForBlock();
           let position = that.setPositionForBlock();;
@@ -583,7 +583,7 @@ export default class Sketch {
           if (i < items ){
             loop();
           }
-        }, 100);
+        }, 190);
       };
      loop();
     });
