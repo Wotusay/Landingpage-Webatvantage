@@ -45,6 +45,7 @@ export default class Sketch {
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
+    this.fontBold;
     this.fontLight;
     this.hdrCubeMap;
     this.jointBody;
@@ -391,7 +392,7 @@ export default class Sketch {
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
     this.front.position.set(0,0,1.65);
-    this.back.position.set(0,0,-1);
+    this.back.position.set(0,0,-1.65);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -532,19 +533,24 @@ export default class Sketch {
     // Alle fonts werken niett met pixels maar met meter
     // Dus pas op als je iets aan past
     // Regular
+
     this.loader.load(fontPathTwo, (font) => {
-      let geometry = new THREE.TextGeometry( 'online experiences', {
+      let geometryBold = new THREE.TextGeometry( 'online experiences', {
         font: font,
         size: 0.5,
         height: 0.01,
 
       } );
 
-      geometry.computeBoundingBox();
+      geometryBold.computeBoundingBox();
 
-      this.fontBold = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
+      this.fontBold = new THREE.Mesh(geometryBold, new THREE.MeshBasicMaterial({color:0x000000}));
+
     });
 
+    this.fontBold.scale.set(1,1,1);
+    this.fontBold.position.set(-2.7,-0.2,0);
+    this.scene.add(this.fontBold);
 
     // Light
     this.loader.load(fontPathOne, (font) => {
@@ -555,14 +561,10 @@ export default class Sketch {
       });
 
       this.fontLight = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0x000000}));
-      this.fontLight.scale.set(1,1,1);
-      this.fontLight.position.set(-1.55,0.65,0);
-      this.fontBold.scale.set(1,1,1);
-      this.fontBold.position.set(-2.7,-0.2,0);
-      this.scene.add(this.fontLight);
-      this.scene.add(this.fontBold);
-
     });
+    this.fontLight.scale.set(1,1,1);
+    this.fontLight.position.set(-1.55,0.65,0);
+    this.scene.add(this.fontLight);
 
   };
 
