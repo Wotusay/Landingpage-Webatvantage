@@ -571,7 +571,7 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 150;
+      const items = 60;
       that.resize();
       let i = 0;
       const loop = () => {
