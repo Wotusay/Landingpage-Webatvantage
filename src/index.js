@@ -669,8 +669,14 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        this.groundLeft.position.set(-(width/160),0,0);
-        this.groundRight.position.set((width/160),0,0);
+        if(width/160 >= 8) {
+          this.groundLeft.position.set(-8,0,0);
+          this.groundRight.position.set(8,0,0);
+        } else {
+          this.groundLeft.position.set(-(width/160),0,0);
+          this.groundRight.position.set((width/160),0,0);
+        }
+
       };
 
   };
