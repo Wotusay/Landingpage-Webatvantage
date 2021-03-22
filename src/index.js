@@ -264,64 +264,34 @@ export default class Sketch {
     // The bodies are compound bodies
     let body;
 
-    const eggBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
     const eggBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
     const bunnyBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
-    const bunnyBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
-    const chickenBodyBig = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
     const chickenBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
 
     // Chicken
-    // Big
-    chickenBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.25, 0.32, 0.25)), new CANNON.Vec3(-0.02, 0, 0)); // body
-    chickenBodyBig.addShape(new CANNON.Sphere(.05), new CANNON.Vec3(-0.13, 0.2, 0)); //head
-    chickenBodyBig.addShape(new CANNON.Sphere(.09), new CANNON.Vec3(0.36, 0.25, 0)); //tail
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.1), new CANNON.Vec3(0.16, 0.12, 0)); //tail
+
     // Bunny
-    // Big
-    bunnyBodyBig.addShape(new CANNON.Box(new CANNON.Vec3(0.2, 0.35, 0.15)), new CANNON.Vec3(-0.02, 0.06, 0)); // body
-    bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(0, 0.50, 0)); // ears
-    bunnyBodyBig.addShape(new CANNON.Sphere(.04), new CANNON.Vec3(-0.35, -0.12, 0)); //tail
     // Med
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.04, 0.08, 0.05)), new CANNON.Vec3(0.04, 0.14, 0)); // ears
 
     // Egg
-    // Big
-    eggBodyBig.addShape(new CANNON.Sphere(.35), new CANNON.Vec3(0, 0, 0));      //body big
-    eggBodyBig.addShape(new CANNON.Sphere(.27), new CANNON.Vec3(0, 0.2, 0));      //body top small
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.02, 0.45, 0));   //top end
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(-0.30, 0, 0));  //left side
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.30, 0, 0));   // right side
-    eggBodyBig.addShape(new CANNON.Sphere(.02), new CANNON.Vec3(0.05, -0.2, 0));  //botttom end
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0)); //body big
     eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.13, 0));  // Body top small
 
 
     switch(true){
-      case (object === 'egg' && size === 0.3):
-        body = eggBodyBig;
-        break;
-
         case (object === 'egg' && size === 0.25):
         body = eggBodyMed;
         break;
-
-        case (object === 'bunny' && size === 0.3):
-        body = bunnyBodyBig;
-        break;
-
         case (object === 'bunny' && size === 0.25):
         body = bunnyBodyMed;
-        break;
-
-        case (object === 'chicken' && size === 0.3):
-        body = chickenBodyBig;
         break;
 
         case (object === 'chicken' && size === 0.25):
