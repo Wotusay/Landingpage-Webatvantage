@@ -16,24 +16,24 @@ import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
 import * as CANNON from 'cannon-es'
-import cannonDebugger from 'cannon-es-debugger'
 
 
 export default class Sketch {
-  constructor(date) {
-    this.date = date;
-    this.isDragging = false;
+  constructor() {
     this.renderer = new THREE.WebGLRenderer( { alpha: true , powerPreference: "high-performance", antialias:true } );
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.shadowMap.enabled = true;
+
     this.container = document.getElementById('container');
     this.container.appendChild( this.renderer.domElement );
     this.width =  this.container.offsetWidth;
     this.height = this.container.offsetHeight;
+
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
+
     this.hemiLight = new THREE.HemisphereLight(0xffeeb1, 0x080820,0.6);
     this.spotLight = new THREE.SpotLight(0xffa95c,1.3);
     this.spotLightTwo = new THREE.SpotLight(0xffa95c,0.8);
@@ -46,18 +46,17 @@ export default class Sketch {
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
+
     this.fontBold;
     this.fontLight;
-    this.hdrCubeMap;
+
     this.jointBody;
     this.world;
     this.dt = 1 /60;
     this.cubeBody = [];
     this.meshes = [];
     this.jointConstraint;
-
-
-
+    this.isDragging = false;
 
     // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
     // De links is de decoder zelf om deze dan te gebruiken ook in production
@@ -470,22 +469,8 @@ export default class Sketch {
 
   setSizeForBlock() {
     // Hier komen dan alle sizes voor de elementen
-    const number = 3;
     const sizes = { s:0.15, m:0.25, b:0.3};
-    let numberGen = Math.floor(Math.random() * number);
-    let size;
-    switch (numberGen) {
-      case 0 :
-        size = sizes.m;
-        break;
-      case 1 :
-        size = sizes.m;
-        break;
-      case 2 :
-        size = sizes.m;
-        break;
-    };
-
+    let size = sizes.m;
     return size;
   };
 
@@ -511,8 +496,6 @@ export default class Sketch {
       this.scene.add(this.fontBold);
 
     });
-
-
 
     // Light
     this.loader.load(fontPathOne, (font) => {
@@ -598,7 +581,6 @@ export default class Sketch {
     this.groundLeft.position.set(-width,0,0);
     this.groundRight.position.set(width,0,0);
   }
-
 
   resizeElements(width) {
 
@@ -716,5 +698,4 @@ export default class Sketch {
   };
 }
 
-let date = new Date();
-new Sketch(date);
+new Sketch();
