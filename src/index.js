@@ -326,18 +326,20 @@ export default class Sketch {
     setTimeout(()=> {
       // This time out is needed
       // Because it  needs some time to load  the object
-      const mesh = this.model.clone();
-      if (mesh !== undefined ) {
-        let body =  this.collisionDecider(itemPicker.collisionBox,size)
-        mesh.scale.set(size/1.5,size/1.5,size/1.5);
-        if (body !== undefined) {
-          body.position.set(position.x, position.y, position.z);
-          o.mesh = mesh;
-          o.body = body;
-          this.scene.add(mesh);
+      if (this.model !== undefined) {
+        const mesh = this.model.clone();
+        if (mesh !== undefined ) {
+          let body =  this.collisionDecider(itemPicker.collisionBox,size)
+          mesh.scale.set(size/1.5,size/1.5,size/1.5);
+          if (body !== undefined) {
+            body.position.set(position.x, position.y, position.z);
+            o.mesh = mesh;
+            o.body = body;
+            this.scene.add(mesh);
 
-          this.world.addBody(body);
-          this.bodies.push(o);
+            this.world.addBody(body);
+            this.bodies.push(o);
+          }
         }
       }
     },190)
@@ -565,7 +567,6 @@ export default class Sketch {
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
 
-    console.log(this.camera.aspect);
 
     if(this.fontLight === undefined ) {
       setTimeout(() => {
@@ -680,17 +681,11 @@ export default class Sketch {
         this.world.addBody(this.fontBody);
         // The left and right wall
 
-        console.log(width/170);
-
-
         if((width/170) >= 10) {
           space = ((width / 100) / 2) - 0.4;
-          console.log(space)
-
           this.groundResizer(space);
         }
-        if((width/170) <= 10)
-        {
+        if((width/170) <= 10) {
           space = width / 170;
           this.groundResizer(space);
         }
