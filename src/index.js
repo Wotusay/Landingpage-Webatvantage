@@ -40,7 +40,8 @@ export default class Sketch {
     this.spotLight.position.set(10,0,10);
     this.spotLightTwo.position.set(-10,0,10)
     this.hemiLight.position.set(5,0,5);
-    this.camera = new THREE.PerspectiveCamera( 70, this.width / this.height, 0.001, 300 );
+    this.cameraFov = 70;
+    this.camera = new THREE.PerspectiveCamera( this.cameraFov, this.width / this.height, 0.001, 300 );
     this.camera.position.set(0, 0, 6);
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
@@ -461,7 +462,6 @@ export default class Sketch {
     const rightBoundry = 3.5;
 
     const x = (Math.random() * (rightBoundry - leftBoundry + 1) + leftBoundry);
-    console.log(x);
     let position = {x:x ,y:5 ,z:0};
     return position;
   };
@@ -534,6 +534,7 @@ export default class Sketch {
     let that = this ;
     window.addEventListener('load', (e) => {
       const items = 90;
+
       that.resize();
       let i = 0;
       const loop = () => {
@@ -564,9 +565,10 @@ export default class Sketch {
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
 
+    console.log(this.camera.aspect);
+
     if(this.fontLight === undefined ) {
       setTimeout(() => {
-        console.log(true);
         this.resizeElements(this.width);
       },150);
     }
@@ -575,26 +577,57 @@ export default class Sketch {
     };
   };
 
+  fontScaler(scale,posLight,posBold) {
+    this.fontLight.scale.set(scale,scale,scale);
+    this.fontLight.position.set(posLight.x,posLight.y,posLight.z);
+    this.fontBold.scale.set(scale,scale,scale);
+    this.fontBold.position.set(posBold.x,posBold.y,posBold.z);
+  }
+
+  cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold) {
+    this.world.removeBody(this.fontBody);
+    this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
+    this.fontBody.addShape(new CANNON.Box(fontBodyLight),posBodyLight ); // Regular font
+    this.fontBody.addShape(new CANNON.Box(fontBodyBold), posBodyBold); // light font
+    this.fontBody.position.set(0,0,0);
+    this.world.addBody(this.fontBody);
+  }
+
+  groundResizer(width) {
+    this.groundLeft.position.set(-width,0,0);
+    this.groundRight.position.set(width,0,0);
+  }
+
 
   resizeElements(width) {
+
+    let scale;
+    let posLight;
+    let posBold;
+    let fontBodyLight;
+    let fontBodyBold;
+    let posBodyBold;
+    let posBodyLight;
+    let space;
+
     // Resize chekker
     switch (true) {
       case(width >= 375 && width <= 767):
         // Scale of the font
-        this.fontLight.scale.set(0.65,0.65,0.65);
-        this.fontLight.position.set(-1,0.65,0);
-        this.fontBold.scale.set(0.65,0.65,0.65);
-        this.fontBold.position.set(-1.75,0.15,0);
+        scale = 0.65;
+        posLight = {x:-1,y:0.65,z:0};
+        posBold = {x:-1.75, y:0.15, z:0};
+        fontBodyLight = new CANNON.Vec3(1.4,0.18, 1.5);
+        fontBodyBold = new CANNON.Vec3(1,0.15,1.2);
+        posBodyBold = new CANNON.Vec3(0, 0.2, 0);
+        posBodyLight = new CANNON.Vec3(0, 0.66, 0);
+
+        this.fontScaler(scale,posLight,posBold);
         // Body of the font
-        this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.4,0.18, 1.5)), new CANNON.Vec3(0, 0.2, 0)); // Regular font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1,0.15,1.2)), new CANNON.Vec3(0, 0.66, 0)); // light font
-        this.fontBody.position.set(0,0,0);
-        this.world.addBody(this.fontBody);
+        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
         // The left and right wall
-        this.groundLeft.position.set(-(width/140),0,0);
-        this.groundRight.position.set(width/140,0,0);
+        space = width/140;
+        this.groundResizer(space)
         break;
       case(width >= 768 && width <= 1023):
         // The scale of the font
@@ -610,18 +643,33 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        this.groundLeft.position.set(-(width/160),0,0);
-        this.groundRight.position.set(width/160,0,0);
+
+        scale = 0.83;
+        posLight = {x:-1.2,y:0.675,z:0};
+        posBold = {x:-2.2, y:0, z:0};
+        fontBodyLight = new CANNON.Vec3(1.9,0.18, 1.5);
+        fontBodyBold = new CANNON.Vec3(1.2,0.15,1.2);
+        posBodyBold = new CANNON.Vec3(0, 0.1, 0);
+        posBodyLight = new CANNON.Vec3(0, 0.86, 0);
+
+        this.fontScaler(scale,posLight,posBold);
+        // Body of the font
+        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
+        space = width/160
+        // The left and right wall
+        this.groundResizer(space)
         break;
       case(width >= 1024):
         // The scale of the font
-        this.fontLight.scale.set(1,1,1);
-        this.fontLight.position.set(-1.55,0.65,0);
-        this.fontBold.scale.set(1,1,1);
-        this.fontBold.position.set(-2.7,-0.2,0);
+
+
+        scale = 1;
+        posLight = {x:-1.55,y:0.65,z:0};
+        posBold = {x:-2.7, y:-0.2, z:0};
+        this.fontScaler(scale,posLight,posBold);
         // Body of the font
         this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, STATIC:1, allowSleep: false });
+        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.6,0.18,1.2)), new CANNON.Vec3(0, 0.795, 0)); // light font
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.19,0.1,1.5)), new CANNON.Vec3(-0.85, 0.935, 0));// Top tiny part of light font
@@ -631,12 +679,20 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
-        if(width/160 >= 8) {
-          this.groundLeft.position.set(-8,0,0);
-          this.groundRight.position.set(8,0,0);
-        } else {
-          this.groundLeft.position.set(-(width/160),0,0);
-          this.groundRight.position.set((width/160),0,0);
+
+        console.log(width/170);
+
+
+        if((width/170) >= 10) {
+          space = ((width / 100) / 2) - 0.4;
+          console.log(space)
+
+          this.groundResizer(space);
+        }
+        if((width/170) <= 10)
+        {
+          space = width / 170;
+          this.groundResizer(space);
         }
 
       };
@@ -644,6 +700,9 @@ export default class Sketch {
   };
 
   render() {
+
+
+
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
     this.world.step(this.dt);
