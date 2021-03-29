@@ -369,7 +369,7 @@ export default class Sketch {
     this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
     this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
 
-    this.groundBottom.position.set(0,-4.5,0);
+    this.groundBottom.position.set(0,-4.9,0);
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set(-7,0,0);
     this.groundRight.position.set(7,0,0);
@@ -666,13 +666,14 @@ export default class Sketch {
 
         if((width/170) >= 10) {
           console.log(true)
-          space = ((width / 100) / 2) - 0.4;
+          space = ((width / 100) / 2) - 0.5;
+          console.log(space)
           this.groundResizer(space);
         }
         if((width/170) <= 10) {
           console.log(false)
 
-          space = width / 170;
+          space = (width / 170) - 1.2 ;
           this.groundResizer(space);
         }
 
