@@ -681,11 +681,15 @@ export default class Sketch {
         this.world.addBody(this.fontBody);
         // The left and right wall
 
+
         if((width/170) >= 10) {
+          console.log(true)
           space = ((width / 100) / 2) - 0.4;
           this.groundResizer(space);
         }
         if((width/170) <= 10) {
+          console.log(false)
+
           space = width / 170;
           this.groundResizer(space);
         }
