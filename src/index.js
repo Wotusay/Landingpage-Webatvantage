@@ -55,13 +55,23 @@ export default class Sketch {
     this.meshes = [];
     this.jointConstraint;
 
+
+
+
     // Dit de loader die wordt gebruikt om alle glttf inteladen en deze te compressen
     // De links is de decoder zelf om deze dan te gebruiken ook in production
     this.sceneloader = new GLTFLoader();
     this.dracoLoader = new DRACOLoader();
-    this.dracoLoader.setDecoderConfig({type: 'js'})
+    this.dracoLoader.setDecoderConfig({type: 'js'});
     this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-    this.sceneloader.setDRACOLoader(this.dracoLoader)
+    this.sceneloader.setDRACOLoader(this.dracoLoader);
+
+    this.chikken =  new Model(Chikken, this.sceneloader);
+    this.bunny =  new Model(Bunny, this.sceneloader);
+    this.egg =  new Model(Egg, this.sceneloader);
+    this.eggRed =  new Model(RedEgg, this.sceneloader);
+    this.eggBlue =  new Model(BlueEgg, this.sceneloader);
+    this.eggGreen =  new Model(GreenEgg, this.sceneloader);
 
     this.scene.add(this.hemiLight);
     this.scene.add(this.spotLight);
@@ -310,12 +320,12 @@ export default class Sketch {
     // Same with the meshes
     let o = {};
     let itemPicker =  this.setModelForHoliday();
-    this.model =  new Model(itemPicker.model, this.sceneloader);
+    this.model =  itemPicker.model;
 
     setTimeout(()=> {
       // This time out is needed
       // Because it  needs some time to load  the object
-      const mesh = this.model.object;
+      const mesh = this.model.clone();
       if (mesh !== undefined ) {
         let body =  this.collisionDecider(itemPicker.collisionBox,size)
         mesh.scale.set(size/1.5,size/1.5,size/1.5);
@@ -415,29 +425,29 @@ export default class Sketch {
     let o = {};
     switch (numberGen) {
       case 0 :
-        o.model = Chikken;
+        o.model = this.chikken.object;
         o.collisionBox = 'chicken';
         o.collidesWidth = {x: 0.014, y:0 ,z:0.28};
         break;
       case 1 :
-        o.model = Bunny ;
+        o.model = this.bunny.object ;
         o.collisionBox = 'bunny';
         o.collidesWidth = {x:0.103, y:0.56 ,z:0};
         break;
       case 2 :
-        o.model = Egg;
+        o.model = this.egg.object;
         o.collisionBox = 'egg';
         break;
       case 3 :
-        o.model = RedEgg;
+        o.model = this.eggRed.object;
         o.collisionBox = 'egg';
         break;
       case 4 :
-        o.model = BlueEgg;
+        o.model = this.eggBlue.object;
         o.collisionBox = 'egg';
         break;
       case 5 :
-        o.model = GreenEgg;
+        o.model = this.eggGreen.object;
         o.collisionBox = 'egg';
         break;
     };
@@ -447,33 +457,12 @@ export default class Sketch {
 
   setPositionForBlock() {
         // Hier komen dan alle posities van de objecten terechtn
-    const number = 7;
-    let numberGen = Math.floor(Math.random() * number);
-    let position;
-    switch (numberGen) {
-      case 0 :
-        position = {x:-3 ,y:5 ,z:0};
-        break;
-      case 1 :
-        position = {x:-2 ,y:5 ,z:0};
-        break;
-      case 2 :
-        position = {x:-1 ,y:5 ,z:0};
-        break;
-      case 3 :
-        position = {x:0 ,y:5 ,z:0};
-        break;
-      case 4 :
-        position = {x:1 ,y:5 ,z:0};
-        break;
-      case 5 :
-        position = {x:2 ,y:5 ,z:0};
-        break;
-      case 6 :
-        position = {x:3 ,y:5 ,z:0};
-        break;
-    };
+    const leftBoundry = -3.5;
+    const rightBoundry = 3.5;
 
+    const x = (Math.random() * (rightBoundry - leftBoundry + 1) + leftBoundry);
+    console.log(x);
+    let position = {x:x ,y:5 ,z:0};
     return position;
   };
 
