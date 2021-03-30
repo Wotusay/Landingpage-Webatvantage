@@ -16,7 +16,7 @@ import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
 import * as CANNON from 'cannon-es';
-
+import CannonDebugger from 'cannon-es-debugger'
 
 export default class Sketch {
   constructor() {
@@ -24,7 +24,6 @@ export default class Sketch {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
-    this.renderer.shadowMap.enabled = true;
 
     this.container = document.getElementById('container');
     this.container.appendChild( this.renderer.domElement );
@@ -68,12 +67,12 @@ export default class Sketch {
     this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     this.sceneloader.setDRACOLoader(this.dracoLoader);
 
-    this.chikken =  new Model(Chikken, this.sceneloader);
-    this.bunny =  new Model(Bunny, this.sceneloader);
-    this.egg =  new Model(Egg, this.sceneloader);
-    this.eggRed =  new Model(RedEgg, this.sceneloader);
-    this.eggBlue =  new Model(BlueEgg, this.sceneloader);
-    this.eggGreen =  new Model(GreenEgg, this.sceneloader);
+    this.chikken = new Model(Chikken, this.sceneloader);
+    this.bunny = new Model(Bunny, this.sceneloader);
+    this.egg = new Model(Egg, this.sceneloader);
+    this.eggRed = new Model(RedEgg, this.sceneloader);
+    this.eggBlue = new Model(BlueEgg, this.sceneloader);
+    this.eggGreen = new Model(GreenEgg, this.sceneloader);
 
     this.scene.add(this.hemiLight);
     this.scene.add(this.spotLight);
@@ -402,7 +401,7 @@ export default class Sketch {
     // The pivot point between elemenets
     this.constraintMaker();
     // This a cannon debugger when u want to see alle the shapes of the collisions
-    //cannonDebugger(this.scene, this.world.bodies);
+    CannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -565,8 +564,8 @@ export default class Sketch {
   cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold) {
     this.world.removeBody(this.fontBody);
     this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
-    this.fontBody.addShape(new CANNON.Box(fontBodyLight),posBodyLight ); // Regular font
-    this.fontBody.addShape(new CANNON.Box(fontBodyBold), posBodyBold); // light font
+    this.fontBody.addShape(new CANNON.Box(fontBodyBold),posBodyLight ); // Regular font
+    this.fontBody.addShape(new CANNON.Box(fontBodyLight), posBodyBold); // light font
     this.fontBody.position.set(0,0,0);
     this.world.addBody(this.fontBody);
   }
@@ -610,7 +609,6 @@ export default class Sketch {
     let fontBodyBold;
     let posBodyBold;
     let posBodyLight;
-
 
     // Resize chekker
 
