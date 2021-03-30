@@ -373,8 +373,8 @@ export default class Sketch {
 
     this.groundBottom.position.set(0,-4.9,0);
     this.groundTop.position.set(0,9.5,0);
-    this.groundLeft.position.set(-7,0,0);
-    this.groundRight.position.set(7,0,0);
+    this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
+    this.groundRight.position.set((this.camera.right + 0.85),0,0);
     this.front.position.set(0,0,1.65);
     this.back.position.set(0,0,-1.65);
 
