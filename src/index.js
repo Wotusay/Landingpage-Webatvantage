@@ -92,11 +92,8 @@ export default class Sketch {
   clickMaker() {
     // The pivot point of the geometery
     // The item where the object hangs on
-    const markerGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8)
-    const markerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
-    this.clickMarker = new THREE.Mesh(markerGeometry, markerMaterial)
-    this.clickMarker.visible = false // Hide it..
-    this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshBasicMaterial());
+
+    this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
   }
   // Deze functies dienen voor de model of cube te laten randomizen
   getHitPoint(clientX, clientY, mesh, camera) {
@@ -109,14 +106,8 @@ export default class Sketch {
     return hits.length > 0 ? hits[0].point : undefined;
   }
 
-  showClickMarker() {
-    this.clickMarker.visible = true;
-  }
 
-  moveClickMarker(position) {
-    // To move the pivot object
-    this.clickMarker.position.copy(position);
-  }
+
 
   moveMovementPlane(point, camera) {
     // To move the plane
@@ -163,9 +154,7 @@ export default class Sketch {
     this.isDragging = true
   }
 
-  hideClickMarker() {
-    this.clickMarker.visible = false
-  }
+
 
   onDrag() {
     this.clickMaker();
@@ -181,8 +170,6 @@ export default class Sketch {
             if (!hitPoint) {
               return;
             }
-            this.showClickMarker()
-            this.moveClickMarker(hitPoint);
 
             this.moveMovementPlane(hitPoint, this.camera)
             this.addJointConstraint(hitPoint, b.body)
@@ -201,7 +188,6 @@ export default class Sketch {
       const hitPoint = this.getHitPoint(e.touches[0].clientX, e.touches[0].clientY, this.movementPlane, this.camera)
 
       if (hitPoint) {
-        this.moveClickMarker(hitPoint)
         this.moveJoint(hitPoint)
       }
     });
@@ -209,7 +195,7 @@ export default class Sketch {
     window.addEventListener('touchend', (e) => {
       this.isDragging = false
       // Hide the marker mesh
-      this.hideClickMarker()
+
       // Remove the mouse constraint from the world
       this.removeJointConstraint();
 
