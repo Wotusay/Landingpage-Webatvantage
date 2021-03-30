@@ -500,7 +500,7 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 65;
+      const items = 75;
 
       that.resize();
       let i = 0;
