@@ -554,14 +554,19 @@ export default class Sketch {
     this.camera.left = this.spectrum * aspect / -2;
     this.camera.right = this.spectrum * aspect / 2;
     this.camera.updateProjectionMatrix();
+    this.groundResizer();
+    this.resizeElementsBody(this.width);
+
 
     if(this.fontLight === undefined ) {
       setTimeout(() => {
-        this.resizeElements(this.width);
+        this.resizeElementsSizes(this.width);
+
       },150);
     }
     else {
-      this.resizeElements(this.width);
+      this.resizeElementsSizes(this.width);
+
     };
   };
 
@@ -586,74 +591,59 @@ export default class Sketch {
     this.groundRight.position.set((this.camera.right + 1) ,0,0);
   }
 
-  resizeElements(width) {
+  resizeElementsSizes(width) {
 
     let scale;
     let posLight;
     let posBold;
-    let fontBodyLight;
-    let fontBodyBold;
-    let posBodyBold;
-    let posBodyLight;
-    let space;
-
     // Resize chekker
     switch (true) {
       case(width >= 375 && width <= 767):
-        // Scale of the font
         scale = 0.65;
         posLight = {x:-1,y:0.65,z:0};
         posBold = {x:-1.75, y:0.15, z:0};
-        fontBodyLight = new CANNON.Vec3(1.4,0.18, 1.5);
-        fontBodyBold = new CANNON.Vec3(1,0.15,1.2);
-        posBodyBold = new CANNON.Vec3(0, 0.2, 0);
-        posBodyLight = new CANNON.Vec3(0, 0.66, 0);
-
         this.fontScaler(scale,posLight,posBold);
-        // Body of the font
-        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
-        // The left and right wall
-
-        this.groundResizer(space)
         break;
       case(width >= 768 && width <= 1023):
-        // The scale of the font
-        this.fontLight.scale.set(0.83,0.83,0.83);
-        this.fontLight.position.set(-1.2,0.675,0);
-        this.fontBold.scale.set(0.83,0.83,0.83);
-        this.fontBold.position.set(-2.2,0,0);
-        // Body of the font
-        this.world.removeBody(this.fontBody);
-        this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.9,0.18, 1.5)), new CANNON.Vec3(0, 0.1, 0)); // Regular font
-        this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(1.2,0.15,1.2)), new CANNON.Vec3(0, 0.86, 0)); // light font
-        this.fontBody.position.set(0,0,0);
-        this.world.addBody(this.fontBody);
-        // The left and right wall
-
         scale = 0.83;
         posLight = {x:-1.2,y:0.675,z:0};
         posBold = {x:-2.2, y:0, z:0};
-        fontBodyLight = new CANNON.Vec3(1.9,0.18, 1.5);
-        fontBodyBold = new CANNON.Vec3(1.2,0.15,1.2);
-        posBodyBold = new CANNON.Vec3(0, 0.1, 0);
-        posBodyLight = new CANNON.Vec3(0, 0.86, 0);
-
         this.fontScaler(scale,posLight,posBold);
-        // Body of the font
-        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
-
-        // The left and right wall
-        this.groundResizer()
         break;
       case(width >= 1024):
         // The scale of the font
-
         scale = 1;
         posLight = {x:-1.55,y:0.65,z:0};
         posBold = {x:-2.7, y:-0.2, z:0};
         this.fontScaler(scale,posLight,posBold);
-        // Body of the font
+      };
+
+  };
+
+  resizeElementsBody(width) {
+    let fontBodyLight;
+    let fontBodyBold;
+    let posBodyBold;
+    let posBodyLight;
+
+
+    // Resize chekker
+
+      if (width >= 375 && width <= 767){
+        fontBodyLight = new CANNON.Vec3(1.4,0.18, 1.5);
+        fontBodyBold = new CANNON.Vec3(1,0.15,1.2);
+        posBodyBold = new CANNON.Vec3(0, 0.2, 0);
+        posBodyLight = new CANNON.Vec3(0, 0.66, 0)
+        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
+      }
+      if(width >= 768 && width <= 1023){
+        fontBodyLight = new CANNON.Vec3(1.9,0.18, 1.5);
+        fontBodyBold = new CANNON.Vec3(1.2,0.15,1.2);
+        posBodyBold = new CANNON.Vec3(0, 0.1, 0);
+        posBodyLight = new CANNON.Vec3(0, 0.86, 0);
+        this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
+      }
+      if (width >= 1024){
         this.world.removeBody(this.fontBody);
         this.fontBody = new CANNON.Body({mass: 0, STATIC:1 });
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(2.54,0.15, 1.5)), new CANNON.Vec3(0, -0.02, 0)); // Regular font
@@ -664,10 +654,6 @@ export default class Sketch {
         this.fontBody.addShape(new CANNON.Box(new CANNON.Vec3(0.17,0.06,1.5)), new CANNON.Vec3(0.8, 0.15, 0)); // Top tiny part of regular font
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
-        // The left and right wall
-          this.groundResizer();
-
-
       };
 
   };
