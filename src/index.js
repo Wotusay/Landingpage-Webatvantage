@@ -372,12 +372,12 @@ export default class Sketch {
     this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
     this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
 
-    this.groundBottom.position.set(0,-4.95,0);
+    this.groundBottom.position.set(0,-4.99,0);
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
     this.groundRight.position.set((this.camera.right + 0.85),0,0);
     this.front.position.set(0,0,1);
-    this.back.position.set(0,0,-1.95);
+    this.back.position.set(0,0,-2);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
