@@ -374,8 +374,8 @@ export default class Sketch {
 
     this.groundBottom.position.set(0,-4.99,0);
     this.groundTop.position.set(0,9.5,0);
-    this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
-    this.groundRight.position.set((this.camera.right + 0.85),0,0);
+    this.groundLeft.position.set((this.camera.left - 1) ,0,0);
+    this.groundRight.position.set((this.camera.right + 1),0,0);
     this.front.position.set(0,0,1);
     this.back.position.set(0,0,-2);
 
@@ -582,8 +582,8 @@ export default class Sketch {
   }
 
   groundResizer() {
-    this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
-    this.groundRight.position.set((this.camera.right + 0.85) ,0,0);
+    this.groundLeft.position.set((this.camera.left - 1) ,0,0);
+    this.groundRight.position.set((this.camera.right + 1) ,0,0);
   }
 
   resizeElements(width) {
