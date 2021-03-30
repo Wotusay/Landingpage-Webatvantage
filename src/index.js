@@ -287,17 +287,17 @@ export default class Sketch {
     // Med
     chickenBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.14)), new CANNON.Vec3(-0.02, 0, 0)); // body
     chickenBodyMed.addShape(new CANNON.Sphere(.1), new CANNON.Vec3(0.16, 0.12, 0)); //tail
-
+    chickenBodyMed.sleepSpeedLimit = 0.1;
     // Bunny
     // Med
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.08, 0.12, 0.10)), new CANNON.Vec3(-0.02, 0, 0)); // Body
     bunnyBodyMed.addShape(new CANNON.Box(new CANNON.Vec3(0.04, 0.08, 0.05)), new CANNON.Vec3(0.04, 0.14, 0)); // ears
-
+    bunnyBodyMed.sleepSpeedLimit = 0.1;
     // Egg
     //Med
     eggBodyMed.addShape(new CANNON.Sphere(.18), new CANNON.Vec3(0, 0, 0)); //body big
     eggBodyMed.addShape(new CANNON.Sphere(0.09), new CANNON.Vec3(0, 0.13, 0));  // Body top small
-
+    eggBodyMed.sleepSpeedLimit = 0.1;
 
     switch(true){
         case (object === 'egg' && size === 0.25):
@@ -410,6 +410,7 @@ export default class Sketch {
         restitution: 0.5,
     });
     this.world.addContactMaterial(ground_ground_cm);
+    this.world.allowSleep = true;
 
     this.fontBodyAdder();
     // The whole floor are made here
