@@ -30,6 +30,7 @@ export default class Sketch {
     this.container.appendChild( this.renderer.domElement );
     this.width =  this.container.offsetWidth;
     this.height = this.container.offsetHeight;
+    let aspect = this.width  / this.height;
 
     this.mouse = new THREE.Vector2();
     this.point = new THREE.Vector3(0,0,0)
@@ -40,9 +41,10 @@ export default class Sketch {
     this.spotLight.position.set(10,0,10);
     this.spotLightTwo.position.set(-10,0,10)
     this.hemiLight.position.set(5,0,5);
-    this.cameraFov = 70;
-    this.camera = new THREE.PerspectiveCamera( this.cameraFov, this.width / this.height, 0.001, 300 );
-    this.camera.position.set(0, 0, 6);
+    //this.cameraFov = 70;
+    this.spectrum = 8;
+    this.camera = new THREE.OrthographicCamera( this.spectrum * aspect  /-2 ,  this.spectrum * aspect / 2 ,this.spectrum/ 2 ,this.spectrum / -2 , -2, 1000 );
+
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
     this.loader = new THREE.FontLoader();
@@ -547,9 +549,10 @@ export default class Sketch {
     this.width = this.container.offsetWidth;
     this.height = this.container.offsetHeight;
     this.renderer.setSize(this.width, this.height);
-    this.camera.aspect = this.width / this.height;
+    let aspect = this.width / this.height;
+    this.camera.left = this.spectrum * aspect / -2;
+    this.camera.right = this.spectrum * aspect / 2;
     this.camera.updateProjectionMatrix();
-
 
     if(this.fontLight === undefined ) {
       setTimeout(() => {
@@ -577,9 +580,10 @@ export default class Sketch {
     this.world.addBody(this.fontBody);
   }
 
-  groundResizer(width) {
-    this.groundLeft.position.set(-width,0,0);
-    this.groundRight.position.set(width,0,0);
+  groundResizer() {
+    console.log(this.camera.right)
+    this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
+    this.groundRight.position.set((this.camera.right + 0.85) ,0,0);
   }
 
   resizeElements(width) {
@@ -609,7 +613,7 @@ export default class Sketch {
         // Body of the font
         this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
         // The left and right wall
-        space = width/140;
+
         this.groundResizer(space)
         break;
       case(width >= 768 && width <= 1023):
@@ -638,13 +642,12 @@ export default class Sketch {
         this.fontScaler(scale,posLight,posBold);
         // Body of the font
         this.cannonWorldResizer(fontBodyLight,posBodyLight, fontBodyBold, posBodyBold);
-        space = width/160
+
         // The left and right wall
-        this.groundResizer(space)
+        this.groundResizer()
         break;
       case(width >= 1024):
         // The scale of the font
-
 
         scale = 1;
         posLight = {x:-1.55,y:0.65,z:0};
@@ -662,28 +665,14 @@ export default class Sketch {
         this.fontBody.position.set(0,0,0);
         this.world.addBody(this.fontBody);
         // The left and right wall
+          this.groundResizer();
 
-
-        if((width/170) >= 10) {
-          console.log(true)
-          space = ((width / 100) / 2) - 0.5;
-          console.log(space)
-          this.groundResizer(space);
-        }
-        if((width/170) <= 10) {
-          console.log(false)
-
-          space = (width / 170) - 1.2 ;
-          this.groundResizer(space);
-        }
 
       };
 
   };
 
   render() {
-
-
 
     // Hier wordt dan alles gerenderd en opniew gespeeld
     this.time++;
