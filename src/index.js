@@ -214,8 +214,7 @@ export default class Sketch {
             if (!hitPoint) {
               return;
             }
-            this.showClickMarker()
-            this.moveClickMarker(hitPoint);
+
 
             this.moveMovementPlane(hitPoint, this.camera)
             this.addJointConstraint(hitPoint, b.body)
@@ -233,7 +232,7 @@ export default class Sketch {
       // Project the mouse onto the movement plane
       const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.movementPlane, this.camera)
       if (hitPoint) {
-        this.moveClickMarker(hitPoint)
+
         this.moveJoint(hitPoint)
       }
 
@@ -242,7 +241,6 @@ export default class Sketch {
     window.addEventListener('pointerup', () => {
       this.isDragging = false
       // Hide the marker mesh
-      this.hideClickMarker()
       // Remove the mouse constraint from the world
       this.removeJointConstraint();
 
