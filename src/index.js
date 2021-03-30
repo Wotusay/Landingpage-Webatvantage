@@ -15,7 +15,7 @@ import GreenEgg from './assets/greenegg.gltf';
 import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
-import * as CANNON from 'cannon-es'
+import * as CANNON from 'cannon-es';
 
 
 export default class Sketch {
@@ -43,7 +43,7 @@ export default class Sketch {
     this.hemiLight.position.set(5,0,5);
     //this.cameraFov = 70;
     this.spectrum = 8;
-    this.camera = new THREE.OrthographicCamera( this.spectrum * aspect  /-2 ,  this.spectrum * aspect / 2 ,this.spectrum/ 2 ,this.spectrum / -2 , -2, 1000 );
+    this.camera = new THREE.OrthographicCamera( this.spectrum * aspect  /-2 ,  this.spectrum * aspect / 2 ,this.spectrum/ 2 ,this.spectrum / -2 , -5, 1000 );
 
     this.scene = new THREE.Scene();
     this.raycaster =  new THREE.Raycaster();
@@ -96,7 +96,7 @@ export default class Sketch {
     const markerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
     this.clickMarker = new THREE.Mesh(markerGeometry, markerMaterial)
     this.clickMarker.visible = false // Hide it..
-    this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshBasicMaterial());
+    this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshBasicMaterial());
   }
   // Deze functies dienen voor de model of cube te laten randomizen
   getHitPoint(clientX, clientY, mesh, camera) {
@@ -177,6 +177,7 @@ export default class Sketch {
         b.mesh.traverse((child) => {
           if (child instanceof THREE.Mesh){
             const hitPoint = this.getHitPoint(e.touches[0].clientX, e.touches[0].clientY, child, this.camera);
+
             if (!hitPoint) {
               return;
             }
@@ -245,11 +246,11 @@ export default class Sketch {
       }
       // Project the mouse onto the movement plane
       const hitPoint = this.getHitPoint(e.clientX, e.clientY, this.movementPlane, this.camera)
-
       if (hitPoint) {
         this.moveClickMarker(hitPoint)
         this.moveJoint(hitPoint)
       }
+
     });
 
     window.addEventListener('pointerup', () => {
@@ -371,12 +372,12 @@ export default class Sketch {
     this.front = this.floorMaker(new CANNON.Vec3(40,40,1));
     this.back = this.floorMaker(new CANNON.Vec3(40,40,1));
 
-    this.groundBottom.position.set(0,-4.9,0);
+    this.groundBottom.position.set(0,-4.95,0);
     this.groundTop.position.set(0,9.5,0);
     this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
     this.groundRight.position.set((this.camera.right + 0.85),0,0);
-    this.front.position.set(0,0,1.65);
-    this.back.position.set(0,0,-1.65);
+    this.front.position.set(0,0,1);
+    this.back.position.set(0,0,-1.95);
 
     let allFloors = [this.groundBottom, this.groundTop,this.groundLeft, this.groundRight, this.front,this.back];
 
@@ -386,7 +387,7 @@ export default class Sketch {
   };
 
   constraintMaker() {
-    const jointShape = new CANNON.Sphere(0.1);
+    const jointShape = new CANNON.Sphere(0.5);
     this.jointBody = new CANNON.Body({ mass: 0 });
     this.jointBody.addShape(jointShape);
     this.jointBody.collisionFilterGroup = 0;
@@ -416,7 +417,7 @@ export default class Sketch {
     // The pivot point between elemenets
     this.constraintMaker();
     // This a cannon debugger when u want to see alle the shapes of the collisions
-    // cannonDebugger(this.scene, this.world.bodies);
+    //cannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -581,7 +582,6 @@ export default class Sketch {
   }
 
   groundResizer() {
-    console.log(this.camera.right)
     this.groundLeft.position.set((this.camera.left - 0.85) ,0,0);
     this.groundRight.position.set((this.camera.right + 0.85) ,0,0);
   }
