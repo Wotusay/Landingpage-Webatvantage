@@ -16,7 +16,7 @@ import fontPathOne from './assets/fonts/HalyardDisplay-ExtraLight.json';
 import fontPathTwo from './assets/fonts/HalyardDisplay-Regular.json';
 // Physics
 import * as CANNON from 'cannon-es';
-import CannonDebugger from 'cannon-es-debugger'
+//import CannonDebugger from 'cannon-es-debugger'
 
 export default class Sketch {
   constructor() {
@@ -89,9 +89,6 @@ export default class Sketch {
   }
 
   clickMaker() {
-    // The pivot point of the geometery
-    // The item where the object hangs on
-
     this.movementPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10), new THREE.MeshBasicMaterial());
   }
   // Deze functies dienen voor de model of cube te laten randomizen
@@ -104,9 +101,6 @@ export default class Sketch {
     const hits = that.raycaster.intersectObject(mesh);
     return hits.length > 0 ? hits[0].point : undefined;
   }
-
-
-
 
   moveMovementPlane(point, camera) {
     // To move the plane
@@ -402,7 +396,7 @@ export default class Sketch {
     // The pivot point between elemenets
     this.constraintMaker();
     // This a cannon debugger when u want to see alle the shapes of the collisions
-    CannonDebugger(this.scene, this.world.bodies);
+    //CannonDebugger(this.scene, this.world.bodies);
   }
 
   setModelForHoliday() {
@@ -506,7 +500,7 @@ export default class Sketch {
     // Hier worden ze ingespawnt
     let that = this ;
     window.addEventListener('load', (e) => {
-      const items = 90;
+      const items = 65;
 
       that.resize();
       let i = 0;
