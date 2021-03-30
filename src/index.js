@@ -268,7 +268,7 @@ export default class Sketch {
 
   floorMaker(sizes) {
     const floorShape = new CANNON.Box(sizes);
-    const floorBody = new CANNON.Body({ mass: 0, allowSleep: false});
+    const floorBody = new CANNON.Body({ mass: 0, allowSleep: true});
     return floorBody.addShape(floorShape);
   }
 
@@ -277,11 +277,11 @@ export default class Sketch {
     // The bodies are compound bodies
     let body;
 
-    const eggBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const eggBodyMed = new CANNON.Body({mass:1, allowSleep: true ,material: this.groundMaterial});
 
-    const bunnyBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const bunnyBodyMed = new CANNON.Body({mass:1, allowSleep: true ,material: this.groundMaterial});
 
-    const chickenBodyMed = new CANNON.Body({mass:1, allowSleep: false ,material: this.groundMaterial});
+    const chickenBodyMed = new CANNON.Body({mass:1, allowSleep: true ,material: this.groundMaterial});
 
     // Chicken
     // Med
