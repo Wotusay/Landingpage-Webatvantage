@@ -50,7 +50,7 @@ export default class Sketch {
 
     this.fontBold;
     this.fontLight;
-
+    this.scene.fog = new THREE.Fog(0x000000, 500, 10000)
     this.jointBody;
     this.world;
     this.dt = 1 /60;
@@ -385,6 +385,7 @@ export default class Sketch {
     this.bodies = [];
     this.world = new CANNON.World();
     this.world.gravity.set(0, -9.7, 0);
+    this.world.solver.tolerance = 0.001
 
     // Materials are needed to set a friction an restitution on a body
     this.groundMaterial = new CANNON.Material("groundMaterial");
